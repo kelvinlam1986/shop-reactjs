@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import MainRouter from "./MainRouter";
+import Alert from "react-s-alert";
+import configureStore from "./data/DataStore";
+import "react-s-alert/dist/s-alert-default.css";
+import "react-s-alert/dist/s-alert-css-effects/slide.css";
+import { Spinner, spinnerService } from "@simply007org/react-spinners";
+import spinner from "./spinner.svg";
+import "./spinner.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const store = configureStore();
+
+export default class App extends Component {
+  render() {
+    return (
+      <React.Fragment>
+        <Provider store={store}>
+          <BrowserRouter>
+            <MainRouter />
+          </BrowserRouter>
+          <Alert stack={{ limit: 3 }} position="top-right" timeout={1000} />
+        </Provider>
+        <div style={{ position: "fixed", top: "30%", left: "50%", zIndex: 1 }}>
+          <Spinner name="shop-spinner" loadingImage={spinner} />
+        </div>
+      </React.Fragment>
+    );
+  }
 }
-
-export default App;
