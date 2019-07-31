@@ -8,10 +8,10 @@ import { SignInForm } from "./auth/SignIn";
 export default class MainRouter extends Component {
   render() {
     return (
-      <div>
+      <React.Fragment>
         <PrivateRoute exact path="/" component={Home} />
         <Route path="/signin" component={props => <SignInForm {...props} />} />
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -10,7 +10,11 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
       auth.isAuthenticated() ? (
         <React.Fragment>
           <Menu />
-          <Component {...props} />
+          <div className="content-wrapper">
+            <div className="container">
+              <Component {...props} />
+            </div>
+          </div>
         </React.Fragment>
       ) : (
         <Redirect
