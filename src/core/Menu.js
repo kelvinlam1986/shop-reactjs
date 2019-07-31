@@ -24,49 +24,52 @@ const Menu = withRouter(({ history }) => (
         <div className="navbar-custom-menu">
           <ul className="nav navbar-nav">
             <li className="">
-              <a href="log.php" className="dropdown-toggle">
+              <Link to="/log" className="dropdown-toggle">
                 <i className="glyphicon glyphicon-list-alt" />
                 &nbsp; Lịch sử truy cập
-              </a>
+              </Link>
             </li>
             <li className="dropdown notifications-menu">
-              <a href="#" className="dropdown-toggle" data-toggle="dropdown">
+              <Link
+                to="/notification"
+                className="dropdown-toggle"
+                data-toggle="dropdown"
+              >
                 <i className="glyphicon glyphicon-wrench" /> &nbsp; Bảo trì
-              </a>
+              </Link>
               <ul className="dropdown-menu">
                 <li>
                   <ul className="menu">
                     <li>
-                      <a href="/category">
+                      <Link to="/category">
                         <i className="glyphicon glyphicon-user text-green" />
                         Danh mục
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a href="/customer">
+                      <Link to="/customer">
                         <i className="glyphicon glyphicon-user text-green" />{" "}
                         Khách hàng
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
               </ul>
             </li>
             <li className="">
-              <a href="/profile" className="dropdown-toggle">
+              <Link to="/profile" className="dropdown-toggle">
                 <i className="glyphicon glyphicon-cog text-orange" />
                 &nbsp; Minh Lam
-              </a>
+              </Link>
             </li>
             <li className="">
-              <a
-                href="#"
-                className="dropdown-toggle"
+              <Link
+                to="/#"
                 onClick={() => auth.signout(() => history.push("/"))}
               >
                 <i className="glyphicon glyphicon-off text-red" />
                 &nbsp; Thoát
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

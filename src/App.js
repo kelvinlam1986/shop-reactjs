@@ -6,7 +6,7 @@ import Alert from "react-s-alert";
 import configureStore from "./data/DataStore";
 import "react-s-alert/dist/s-alert-default.css";
 import "react-s-alert/dist/s-alert-css-effects/slide.css";
-import { Spinner, spinnerService } from "@simply007org/react-spinners";
+import { Spinner } from "@simply007org/react-spinners";
 import spinner from "./spinner.svg";
 import "./spinner.css";
 

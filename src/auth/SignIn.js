@@ -52,8 +52,6 @@ class SignIn extends Component {
   };
 
   componentDidMount() {
-    console.log("SignIn component will mount");
-    //document.body.style.backgroundColor = "#222d32";
     document.body.style.backgroundColor = "#d2d6de";
     document.getElementById("root").classList.add("wrapperLogin");
   }
