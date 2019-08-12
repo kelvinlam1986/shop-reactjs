@@ -1,7 +1,42 @@
 import React, { Component } from "react";
+import Alert from "react-s-alert";
+import { Redirect } from "react-router-dom";
+import { getBranchDefault } from "./core-api";
+import auth from "../auth/auth-helper";
 
 export default class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      branchAdress: null,
+      branchContact: null,
+      redirectToLogin: false
+    };
+  }
+
+  componentDidMount() {
+    getBranchDefault()
+      .then(data => {
+        if (data.errorMessage) {
+          Alert.error(data.errorMessage);
+          auth.signout(() => {
+            this.setState({ redirectToLogin: true });
+          });
+        } else {
+          this.setState({
+            branchAdress: data.address,
+            branchContact: data.contact
+          });
+        }
+      })
+      .catch(e => Alert.error("Không thể kết nối server !"));
+  }
   render() {
+    const { branchAdress, branchContact, redirectToLogin } = this.state;
+    const from = { pathname: "/signin" };
+    if (redirectToLogin) {
+      return <Redirect to={from} />;
+    }
     return (
       <section className="content">
         <div className="row">
@@ -116,16 +151,14 @@ export default class Home extends Component {
                   <i className="glyphicon glyphicon-map-marker margin-r-5" />{" "}
                   Địa chỉ công ty
                 </strong>
-                <p className="text-muted">
-                  240/2 Le Thanh Ton P. Ben Thanh Q1 TP.HCM
-                </p>
+                <p className="text-muted">{branchAdress}</p>
                 <hr />
 
                 <strong>
                   <i className="glyphicon glyphicon-phone-alt margin-r-5" /> Số
                   điện thoại
                 </strong>
-                <p className="text-muted">090 230 5226</p>
+                <p className="text-muted">{branchContact}</p>
                 <hr />
               </div>
             </div>
