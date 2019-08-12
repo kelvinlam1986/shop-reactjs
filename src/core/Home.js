@@ -15,7 +15,8 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    getBranchDefault()
+    const jwt = auth.isAuthenticated();
+    getBranchDefault(jwt)
       .then(data => {
         if (data.errorCode === "404") {
           Alert.error("Không tìm thấy Chủ shop nào phù hợp.");

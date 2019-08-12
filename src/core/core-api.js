@@ -1,11 +1,14 @@
 import Urls from "./Url";
 import { spinnerService } from "@simply007org/react-spinners";
 
-const getBranchDefault = () => {
+const getBranchDefault = credentital => {
   spinnerService.show("shop-spinner");
   return fetch(Urls.GetDefaultBranch, {
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + credentital.access_token
+    }
   })
     .then(response => {
       spinnerService.hideAll();
