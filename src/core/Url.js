@@ -1,12 +1,15 @@
+import config from "../config";
+
 const protocol = "http";
-const hostname = "localhost";
-const port = 5000;
-const apiVersioning = "v1";
 
 const Urls = {
-  Token: `${protocol}://${hostname}:${port}/api/connect/token`,
-  SignOut: `${protocol}://${hostname}:${port}/api/account/signout`,
-  GetDefaultBranch: `${protocol}://${hostname}:${port}/api/${apiVersioning}/branchs/default`
+  Token: `${protocol}://${config.hostName}:${config.apiPort}/api/connect/token`,
+  SignOut: `${protocol}://${config.hostName}:${
+    config.apiPort
+  }/api/account/signout`,
+  GetDefaultBranch: `${protocol}://${config.hostName}:${config.apiPort}/api/${
+    config.apiVersioning
+  }/branch/${config.defaultBranch}`
 };
 
 export default Urls;

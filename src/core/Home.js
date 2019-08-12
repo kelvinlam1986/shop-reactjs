@@ -17,8 +17,8 @@ export default class Home extends Component {
   componentDidMount() {
     getBranchDefault()
       .then(data => {
-        if (data.errorMessage) {
-          Alert.error(data.errorMessage);
+        if (data.errorCode === "404") {
+          Alert.error("Không tìm thấy Chủ shop nào phù hợp.");
           auth.signout(() => {
             this.setState({ redirectToLogin: true });
           });
@@ -29,7 +29,12 @@ export default class Home extends Component {
           });
         }
       })
-      .catch(e => Alert.error("Không thể kết nối server !"));
+      .catch(e => {
+        Alert.error("Không thể kết nối server !");
+        auth.signout(() => {
+          this.setState({ redirectToLogin: true });
+        });
+      });
   }
   render() {
     const { branchAdress, branchContact, redirectToLogin } = this.state;
