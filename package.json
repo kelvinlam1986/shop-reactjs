@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "@simply007org/react-spinners": "^0.0.3",
+    "better-react-spinkit": "^2.0.4",
     "formik": "^1.5.7",
     "lodash": "^4.17.11",
+    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.0.3",
@@ -13,7 +15,8 @@
     "react-s-alert": "^1.4.1",
     "react-scripts": "3.0.1",
     "redux": "^4.0.1",
-    "redux-form": "^8.2.0"
+    "redux-form": "^8.2.0",
+    "redux-saga": "^1.0.5"
   },
   "scripts": {
     "start": "react-scripts start",

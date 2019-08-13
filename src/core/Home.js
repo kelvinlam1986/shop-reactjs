@@ -1,51 +1,28 @@
 import React, { Component } from "react";
-import Alert from "react-s-alert";
 import { Redirect } from "react-router-dom";
-import { getBranchDefault } from "./core-api";
-import auth from "../auth/auth-helper";
+import { connect } from "react-redux";
+import { getBranchAction } from "./core-action-creator";
+import LoadingIndicator from "../components/Loading";
 
-export default class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      branchAdress: null,
-      branchContact: null,
-      redirectToLogin: false
-    };
-  }
-
+class Home extends Component {
   componentDidMount() {
-    const jwt = auth.isAuthenticated();
-    getBranchDefault(jwt)
-      .then(data => {
-        if (data.errorCode === "404") {
-          Alert.error("Không tìm thấy Chủ shop nào phù hợp.");
-          auth.signout(() => {
-            this.setState({ redirectToLogin: true });
-          });
-        } else {
-          this.setState({
-            branchAdress: data.address,
-            branchContact: data.contact
-          });
-        }
-      })
-      .catch(e => {
-        Alert.error("Không thể kết nối server !");
-        auth.signout(() => {
-          this.setState({ redirectToLogin: true });
-        });
-      });
+    this.props.getBranch();
   }
   render() {
-    const { branchAdress, branchContact, redirectToLogin } = this.state;
+    const { branch, redirectToLogin, loading } = this.props;
+    console.log("props", "loading", loading);
     const from = { pathname: "/signin" };
     if (redirectToLogin) {
       return <Redirect to={from} />;
     }
-    return (
-      <section className="content">
-        <div className="row">
+
+    let contentDiv = "";
+
+    if (loading) {
+      contentDiv = <LoadingIndicator />;
+    } else {
+      contentDiv = (
+        <React.Fragment>
           <div className="col-md-8">
             <div className="box box-primary">
               <div className="box-header with-border">
@@ -157,20 +134,43 @@ export default class Home extends Component {
                   <i className="glyphicon glyphicon-map-marker margin-r-5" />{" "}
                   Địa chỉ công ty
                 </strong>
-                <p className="text-muted">{branchAdress}</p>
+                <p className="text-muted">{branch && branch.address}</p>
                 <hr />
 
                 <strong>
                   <i className="glyphicon glyphicon-phone-alt margin-r-5" /> Số
                   điện thoại
                 </strong>
-                <p className="text-muted">{branchContact}</p>
+                <p className="text-muted">{branch && branch.contact}</p>
                 <hr />
               </div>
             </div>
           </div>
-        </div>
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <section className="content">
+        <div className="row">{contentDiv}</div>
       </section>
     );
   }
 }
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getBranch: () => dispatch(getBranchAction())
+  };
+};
+
+const mapStateToProps = state => {
+  console.log("state", state);
+  const { branch, redirectToLogin, loading } = state.core;
+  return { branch, redirectToLogin, loading };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Home);

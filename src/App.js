@@ -3,14 +3,12 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import MainRouter from "./MainRouter";
 import Alert from "react-s-alert";
-import configureStore from "./data/DataStore";
+import { store } from "./data/dataStore";
 import "react-s-alert/dist/s-alert-default.css";
 import "react-s-alert/dist/s-alert-css-effects/slide.css";
 import { Spinner } from "@simply007org/react-spinners";
 import spinner from "./spinner.svg";
 import "./spinner.css";
-
-const store = configureStore();
 
 export default class App extends Component {
   render() {

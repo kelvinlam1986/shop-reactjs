@@ -1,8 +1,6 @@
 import Urls from "./Url";
-import { spinnerService } from "@simply007org/react-spinners";
 
 const getBranchDefault = credentital => {
-  spinnerService.show("shop-spinner");
   return fetch(Urls.GetDefaultBranch, {
     method: "GET",
     headers: {
@@ -11,7 +9,6 @@ const getBranchDefault = credentital => {
     }
   })
     .then(response => {
-      spinnerService.hideAll();
       if (response.ok) {
         return response.json();
       } else {
@@ -23,7 +20,6 @@ const getBranchDefault = credentital => {
       }
     })
     .catch(err => {
-      spinnerService.hideAll();
       throw err;
     });
 };
