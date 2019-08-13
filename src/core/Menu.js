@@ -1,15 +1,16 @@
 import React from "react";
+import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
 import auth from "../auth/auth-helper";
 
-const Menu = withRouter(({ history }) => (
+const Menu = withRouter(({ history, branch }) => (
   <header className="main-header">
     <nav className="navbar navbar-static-top" role="navigation">
       <div className="container">
         <div className="navbar-header" style={{ paddingLeft: 20 }}>
           <Link to="/home" className="navbar-brand">
             <b>
-              <i className="glyphicon glyphicon-home" /> Minh Shop{" "}
+              <i className="glyphicon glyphicon-home" /> {branch && branch.name}
             </b>
             <button
               type="button"
@@ -78,4 +79,9 @@ const Menu = withRouter(({ history }) => (
   </header>
 ));
 
-export default Menu;
+const mapStateToProps = state => {
+  const { branch } = state.core;
+  return { branch };
+};
+
+export default connect(mapStateToProps)(Menu);

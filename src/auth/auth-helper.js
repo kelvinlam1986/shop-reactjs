@@ -1,5 +1,3 @@
-import { signout } from "./api-auth";
-
 const auth = {
   authenticate(jwt, cb) {
     if (typeof window != "undefined") {
@@ -25,9 +23,6 @@ const auth = {
       sessionStorage.removeItem("jwt");
     }
     cb();
-    signout().then(data => {
-      document.cookie = "t=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    });
   }
 };
 

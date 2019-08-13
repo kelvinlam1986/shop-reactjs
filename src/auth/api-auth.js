@@ -29,13 +29,4 @@ const signin = user => {
     });
 };
 
-const signout = () => {
-  return fetch(Urls.SignOut, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" }
-  })
-    .then(res => res.json)
-    .catch(err => console.log(err));
-};
-
-export { signin, signout };
+export { signin };

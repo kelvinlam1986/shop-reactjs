@@ -20,7 +20,7 @@ export default class App extends Component {
           </BrowserRouter>
           <Alert stack={{ limit: 3 }} position="top-right" timeout={1000} />
         </Provider>
-        <div style={{ position: "fixed", top: "30%", left: "50%", zIndex: 1 }}>
+        <div style={{ position: "fixed", top: "50%", left: "50%", zIndex: 1 }}>
           <Spinner name="shop-spinner" loadingImage={spinner} />
         </div>
       </React.Fragment>

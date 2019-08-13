@@ -5,21 +5,20 @@ import {
   REDIRECT_TO_LOGIN
 } from "./core-action-creator";
 
-const initialState = {
+const coreInitialState = {
   branch: null,
   loading: false,
   redirectToLogin: false,
   error: ""
 };
 
-const coreReducer = (state = initialState, action) => {
+const coreReducer = (state = coreInitialState, action) => {
   switch (action.type) {
     case GET_BRANCH:
       return Object.assign({}, state, {
         loading: true
       });
     case GET_BRANCH_SUCCESS:
-      console.log("action", action.payload);
       return Object.assign({}, state, {
         loading: false,
         branch: action.payload.branch,

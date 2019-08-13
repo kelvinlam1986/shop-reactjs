@@ -10,7 +10,6 @@ class Home extends Component {
   }
   render() {
     const { branch, redirectToLogin, loading } = this.props;
-    console.log("props", "loading", loading);
     const from = { pathname: "/signin" };
     if (redirectToLogin) {
       return <Redirect to={from} />;
@@ -165,7 +164,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  console.log("state", state);
   const { branch, redirectToLogin, loading } = state.core;
   return { branch, redirectToLogin, loading };
 };

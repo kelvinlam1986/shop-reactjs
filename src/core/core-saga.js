@@ -10,7 +10,6 @@ import {
 import Alert from "react-s-alert";
 
 const getBranch = credential => {
-  console.log("we are here", "getBranch");
   return getBranchDefault(credential).then(result => {
     if (result.errorCode === "404") {
       return { isNotFound: true, payload: null };
@@ -37,8 +36,8 @@ function* getBranchSaga() {
     }
   } catch (err) {
     yield put(getBranchActionFailed(err));
-    Alert.error("Không thể kết nối server !");
     yield call(() => auth.signout());
+    yield put(() => Alert.error("Không thể kết nối server !"));
     yield put(redirectToLoginAction());
   }
 }
