@@ -1,8 +1,6 @@
 import Urls from "../core/Url";
-import { spinnerService } from "@simply007org/react-spinners";
 
 const signin = user => {
-  spinnerService.show("shop-spinner");
   return fetch(Urls.Token, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -12,7 +10,6 @@ const signin = user => {
     }&client_id=ShopApi&grant_type=password&scope=offine_access profile email`
   })
     .then(res => {
-      spinnerService.hideAll();
       if (res.ok) {
         return res.json();
       } else {
@@ -24,7 +21,6 @@ const signin = user => {
       }
     })
     .catch(e => {
-      spinnerService.hideAll();
       throw e;
     });
 };

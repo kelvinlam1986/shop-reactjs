@@ -1,7 +1,16 @@
 const auth = {
-  authenticate(jwt) {
+  authenticate(jwt, username) {
     if (typeof window != "undefined") {
       sessionStorage.setItem("jwt", JSON.stringify(jwt));
+      sessionStorage.setItem("username", username);
+    }
+  },
+
+  getUserNameFromCache() {
+    if (sessionStorage.getItem("username")) {
+      return sessionStorage.getItem("username");
+    } else {
+      return "";
     }
   },
 

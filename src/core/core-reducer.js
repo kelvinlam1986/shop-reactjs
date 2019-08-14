@@ -7,12 +7,13 @@ import {
   LOGIN_FAILED,
   LOGIN_REQUEST
 } from "./core-action-creator";
+import auth from "../auth/auth-helper";
 
 const coreInitialState = {
   branch: null,
   loading: false,
   redirectToLogin: false,
-  username: "",
+  username: auth.getUserNameFromCache(),
   error: ""
 };
 

@@ -31,7 +31,7 @@ function* loginSaga(action) {
       yield put(loginFailed(result.error));
     } else {
       yield put(loginSuccess(action.user.username));
-      yield call(() => auth.authenticate(result.payload));
+      yield call(() => auth.authenticate(result.payload, action.user.username));
       yield call(() => action.history.push("/"));
     }
   } catch (err) {
