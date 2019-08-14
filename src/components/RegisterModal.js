@@ -12,14 +12,20 @@ export default class RegisterModal extends Component {
       title,
       children,
       hiddenFooter,
-      okDisabled,
+      okDisabled = false,
       clickOK,
       clickCancel,
       showCancel,
       cancelText,
       okText,
-      container
+      container,
+      pristine,
+      submitting
     } = this.props;
+    let disableOk = okDisabled;
+    if (disableOk === false) {
+      disableOk = pristine || submitting;
+    }
     return (
       <div className="modal-container" style={{ height: 200 }}>
         <Modal
@@ -37,16 +43,21 @@ export default class RegisterModal extends Component {
           {!hiddenFooter && (
             <Modal.Footer>
               <Button
-                disabled={okDisabled}
+                disabled={disableOk}
+                type="submit"
                 bsStyle="primary"
                 onClick={clickOK || handleClose}
               >
                 {okText || "Xác nhận"}
               </Button>{" "}
               {showCancel && (
-                <Button bsStyle="danger" onClick={clickCancel || handleClose}>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={clickCancel || handleClose}
+                >
                   {cancelText || "Hủy bỏ"}
-                </Button>
+                </button>
               )}
             </Modal.Footer>
           )}

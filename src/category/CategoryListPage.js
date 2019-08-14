@@ -1,16 +1,35 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { Form } from "react-bootstrap";
+import { Field, reduxForm } from "redux-form";
 import RegisterModal from "../components/RegisterModal";
+import renderInput from "../components/AdvanceTextField";
 
-import { Form, FormGroup, ControlLabel, FormControl } from "react-bootstrap";
+const validate = values => {
+  const errors = {};
+  const requiredFields = ["name"];
+  requiredFields.forEach(field => {
+    if (!values[field]) {
+      if (field === "name") {
+        errors[field] = `Bạn phải nhập Loại sản phẩm !`;
+      }
+    }
+  });
+  return errors;
+};
 
-export default class CategoryListPage extends Component {
+class CategoryListPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { isShowModal: false, title: "Thông tin chi tiết" };
+    this.state = {
+      isShowModal: false,
+      title: "Thông tin chi tiết"
+    };
   }
 
-  handleClose = () => {
+  handleClose = e => {
+    const { dispatch, destroy } = this.props;
+    dispatch(() => destroy());
     this.setState({ isShowModal: false });
   };
 
@@ -18,12 +37,15 @@ export default class CategoryListPage extends Component {
     this.setState({ isShowModal: true });
   };
 
-  saveCategory = () => {
-    console.log("we are here");
+  handleChange = e => {
+    this.setState({ value: e.target.value });
   };
+
+  saveCategory = () => {};
 
   render() {
     const { isShowModal, title } = this.state;
+    const { pristine, submitting } = this.props;
     return (
       <React.Fragment>
         <section className="content-header">
@@ -126,15 +148,24 @@ export default class CategoryListPage extends Component {
           showCancel={true}
           clickOK={this.saveCategory}
           okText="Lưu"
+          pristine={pristine}
+          submitting={submitting}
         >
           <Form>
-            <FormGroup controlId="name">
-              <ControlLabel>Loại sản phẩm</ControlLabel>
-              <FormControl type="text" autoFocus />
-            </FormGroup>
+            <Field
+              name="name"
+              component={renderInput}
+              label="Loại sản phẩm"
+              autofocus
+            />
           </Form>
         </RegisterModal>
       </React.Fragment>
     );
   }
 }
+
+export default reduxForm({
+  form: "CategoryListPage",
+  validate
+})(CategoryListPage);
