@@ -42,7 +42,7 @@ const Menu = withRouter(({ history, branch, username }) => (
                 <li>
                   <ul className="menu">
                     <li>
-                      <Link to="/category">
+                      <Link to="/categories">
                         <i className="glyphicon glyphicon-user text-green" />
                         Danh mục
                       </Link>
@@ -80,7 +80,6 @@ const Menu = withRouter(({ history, branch, username }) => (
 ));
 
 const mapStateToProps = state => {
-  console.log(state.core);
   const { branch, username } = state.core;
   return { branch, username };
 };

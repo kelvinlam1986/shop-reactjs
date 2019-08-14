@@ -44,6 +44,7 @@ const coreReducer = (state = coreInitialState, action) => {
       });
     case LOGIN_REQUEST:
       return Object.assign({}, state, {
+        redirectToLogin: false,
         loading: true,
         username: "",
         error: ""
