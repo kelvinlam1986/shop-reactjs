@@ -8,8 +8,9 @@ import sagas from "./saga";
 const initialState = {};
 const sagaMiddleware = createSagaMiddleware();
 const logger = createLogger();
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const createStoreWithMiddleware = compose(
+const createStoreWithMiddleware = composeEnhancers(
   applyMiddleware(thunk, sagaMiddleware, logger)
 )(createStore);
 
