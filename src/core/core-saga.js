@@ -38,7 +38,6 @@ function* loginSaga(action) {
     yield put(loginFailed(err));
     yield call(() => auth.signout());
     yield put(() => Alert.error("Không thể kết nối server !"));
-    yield put(redirectToLoginAction());
   }
 }
 

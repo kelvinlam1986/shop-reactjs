@@ -51,11 +51,13 @@ const coreReducer = (state = coreInitialState, action) => {
       });
     case LOGIN_SUCCESS:
       return Object.assign({}, state, {
+        loading: false,
         username: action.payload.username,
         error: ""
       });
     case LOGIN_FAILED:
       return Object.assign({}, state, {
+        loading: false,
         error: action.payload.error
       });
     default:
