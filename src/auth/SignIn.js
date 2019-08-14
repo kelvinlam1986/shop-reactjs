@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
-import { signin } from "./api-auth";
-import auth from "./auth-helper";
 import { Field, reduxForm } from "redux-form";
 import { renderTextField } from "../components/TextField";
-import Alert from "react-s-alert";
+import { loginRequest } from "../core/core-action-creator";
+import LoadingIndicator from "../components/Loading";
 
 import "./SignIn.css";
 
@@ -32,23 +30,12 @@ class SignIn extends Component {
   }
 
   submit = values => {
+    const { login, history } = this.props;
     const user = {
       username: values.username,
       password: values.password
     };
-    signin(user)
-      .then(data => {
-        if (data.error) {
-          Alert.error(data.error);
-        } else {
-          auth.authenticate(data, () => {
-            this.setState({ redirectToReferrer: true });
-          });
-        }
-      })
-      .catch(e => {
-        Alert.error("Không thể kết nối server !");
-      });
+    login(user, history);
   };
 
   componentDidMount() {
@@ -62,15 +49,10 @@ class SignIn extends Component {
   }
 
   render() {
-    const { from } = this.props.location.state || { from: { pathname: "/" } };
-    const { handleSubmit, pristine, reset, submitting } = this.props;
-    const { redirectToReferrer } = this.state;
-    if (redirectToReferrer) {
-      return <Redirect to={from} />;
-    }
-
+    const { handleSubmit, pristine, reset, submitting, loading } = this.props;
     return (
       <React.Fragment>
+        {loading && <LoadingIndicator />}
         <div className="login-logo">
           <b>Quản lý Bán Hàng</b>
         </div>
@@ -132,9 +114,20 @@ const SignInForm = reduxForm({
   validate
 })(SignIn);
 
+const mapDispatchToProps = dispatch => {
+  return {
+    login: (user, history) => dispatch(loginRequest(user, history))
+  };
+};
+
+const mapStateToProps = state => {
+  const { username, loading } = state.core;
+  return { username, loading };
+};
+
 const ConnectedSignInForm = connect(
-  null,
-  null
+  mapStateToProps,
+  mapDispatchToProps
 )(SignInForm);
 
 export { ConnectedSignInForm as SignInForm };

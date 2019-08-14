@@ -1,9 +1,8 @@
 const auth = {
-  authenticate(jwt, cb) {
+  authenticate(jwt) {
     if (typeof window != "undefined") {
       sessionStorage.setItem("jwt", JSON.stringify(jwt));
     }
-    cb();
   },
 
   isAuthenticated() {
@@ -18,11 +17,10 @@ const auth = {
     }
   },
 
-  signout(cb) {
+  signout() {
     if (typeof window != "undefined") {
       sessionStorage.removeItem("jwt");
     }
-    cb();
   }
 };
 

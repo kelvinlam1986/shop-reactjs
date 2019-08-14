@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
 import auth from "../auth/auth-helper";
 
-const Menu = withRouter(({ history, branch }) => (
+const Menu = withRouter(({ history, branch, username }) => (
   <header className="main-header">
     <nav className="navbar navbar-static-top" role="navigation">
       <div className="container">
@@ -60,7 +60,7 @@ const Menu = withRouter(({ history, branch }) => (
             <li className="">
               <Link to="/profile" className="dropdown-toggle">
                 <i className="glyphicon glyphicon-cog text-orange" />
-                &nbsp; Minh Lam
+                {" " + username}
               </Link>
             </li>
             <li className="">
@@ -80,8 +80,9 @@ const Menu = withRouter(({ history, branch }) => (
 ));
 
 const mapStateToProps = state => {
-  const { branch } = state.core;
-  return { branch };
+  console.log(state.core);
+  const { branch, username } = state.core;
+  return { branch, username };
 };
 
 export default connect(mapStateToProps)(Menu);

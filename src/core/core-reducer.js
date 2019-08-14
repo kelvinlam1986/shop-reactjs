@@ -2,13 +2,17 @@ import {
   GET_BRANCH,
   GET_BRANCH_SUCCESS,
   GET_BRANCH_FAILED,
-  REDIRECT_TO_LOGIN
+  REDIRECT_TO_LOGIN,
+  LOGIN_SUCCESS,
+  LOGIN_FAILED,
+  LOGIN_REQUEST
 } from "./core-action-creator";
 
 const coreInitialState = {
   branch: null,
   loading: false,
   redirectToLogin: false,
+  username: "",
   error: ""
 };
 
@@ -33,7 +37,24 @@ const coreReducer = (state = coreInitialState, action) => {
 
     case REDIRECT_TO_LOGIN:
       return Object.assign({}, state, {
-        redirectToLogin: true
+        redirectToLogin: true,
+        username: "",
+        error: ""
+      });
+    case LOGIN_REQUEST:
+      return Object.assign({}, state, {
+        loading: true,
+        username: "",
+        error: ""
+      });
+    case LOGIN_SUCCESS:
+      return Object.assign({}, state, {
+        username: action.payload.username,
+        error: ""
+      });
+    case LOGIN_FAILED:
+      return Object.assign({}, state, {
+        error: action.payload.error
       });
     default:
       return state;
