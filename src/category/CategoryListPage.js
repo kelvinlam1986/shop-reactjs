@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Form } from "react-bootstrap";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
@@ -80,7 +80,18 @@ class CategoryListPage extends Component {
 
   render() {
     const { isShowModal, title } = this.state;
-    const { pristine, submitting, categories, loading } = this.props;
+    const {
+      pristine,
+      submitting,
+      categories,
+      loading,
+      redirectToLogin
+    } = this.props;
+    const from = { pathname: "/signin" };
+    if (redirectToLogin) {
+      return <Redirect to={from} />;
+    }
+
     return (
       <React.Fragment>
         <section className="content-header">
@@ -214,7 +225,8 @@ const rxForm = reduxForm({
 
 const mapStateToProps = state => {
   const { loading, categories } = state.category;
-  return { loading, categories };
+  const { redirectToLogin } = state.core;
+  return { loading, categories, redirectToLogin };
 };
 
 const mapDispatchToProps = dispatch => {
