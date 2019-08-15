@@ -2,8 +2,12 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Form } from "react-bootstrap";
 import { Field, reduxForm } from "redux-form";
+import { connect } from "react-redux";
+import { getCategoriesAction } from "../category/category-action-creator";
 import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
+import Loading from "../components/Loading";
+import _ from "lodash";
 
 const validate = values => {
   const errors = {};
@@ -23,9 +27,40 @@ class CategoryListPage extends Component {
     super(props);
     this.state = {
       isShowModal: false,
-      title: "Thông tin chi tiết"
+      title: "Thông tin chi tiết",
+      params: {
+        page: 0,
+        pageSize: 20,
+        keyword: ""
+      }
     };
+
+    this.delayedCallback = _.debounce(this.search, 1000);
   }
+
+  componentDidMount = () => {
+    this.getCategories();
+  };
+
+  search = e => {
+    this.setState(
+      {
+        params: {
+          ...this.state.params,
+          page: 0,
+          pageSize: 20,
+          keyword: e.target.value
+        }
+      },
+      () => {
+        this.getCategories();
+      }
+    );
+  };
+
+  getCategories = () => {
+    this.props.getCategories(this.state.params);
+  };
 
   handleClose = e => {
     const { dispatch, destroy } = this.props;
@@ -45,7 +80,7 @@ class CategoryListPage extends Component {
 
   render() {
     const { isShowModal, title } = this.state;
-    const { pristine, submitting } = this.props;
+    const { pristine, submitting, categories, loading } = this.props;
     return (
       <React.Fragment>
         <section className="content-header">
@@ -64,6 +99,7 @@ class CategoryListPage extends Component {
           </ol>
         </section>
         <section className="content">
+          {loading && <Loading />}
           <div className="row">
             <div className="col-md-4">
               <div className="box box-primary">
@@ -120,18 +156,24 @@ class CategoryListPage extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Banh mi</td>
-                        <td>
-                          <span
-                            style={{ color: "#fff", cursor: "pointer" }}
-                            className="small-box-footer"
-                            onClick={this.handleShow}
-                          >
-                            <i className="glyphicon glyphicon-edit text-blue" />
-                          </span>
-                        </td>
-                      </tr>
+                      {categories &&
+                        categories.length > 0 &&
+                        categories.map((category, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{category.name}</td>
+                              <td>
+                                <span
+                                  style={{ color: "#fff", cursor: "pointer" }}
+                                  className="small-box-footer"
+                                  onClick={this.handleShow}
+                                >
+                                  <i className="glyphicon glyphicon-edit text-blue" />
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>
@@ -165,7 +207,23 @@ class CategoryListPage extends Component {
   }
 }
 
-export default reduxForm({
+const rxForm = reduxForm({
   form: "CategoryListPage",
   validate
 })(CategoryListPage);
+
+const mapStateToProps = state => {
+  const { loading, categories } = state.category;
+  return { loading, categories };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getCategories: params => dispatch(getCategoriesAction(params))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(rxForm);

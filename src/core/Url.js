@@ -9,7 +9,10 @@ const Urls = {
   }/api/account/signout`,
   GetDefaultBranch: `${protocol}://${config.hostName}:${config.apiPort}/api/${
     config.apiVersioning
-  }/branch/${config.defaultBranch}`
+  }/branch/${config.defaultBranch}`,
+  GetCategories: `${protocol}://${config.hostName}:${config.apiPort}/api/${
+    config.apiVersioning
+  }/category`
 };
 
 export default Urls;
