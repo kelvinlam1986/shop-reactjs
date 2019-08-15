@@ -7,6 +7,7 @@ import { getCategoriesAction } from "../category/category-action-creator";
 import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
 import Loading from "../components/Loading";
+import Pagination from "../components/Pagination";
 import _ from "lodash";
 
 const validate = values => {
@@ -85,7 +86,9 @@ class CategoryListPage extends Component {
       submitting,
       categories,
       loading,
-      redirectToLogin
+      redirectToLogin,
+      totalPages,
+      page
     } = this.props;
     const from = { pathname: "/signin" };
     if (redirectToLogin) {
@@ -187,6 +190,12 @@ class CategoryListPage extends Component {
                         })}
                     </tbody>
                   </table>
+                  <Pagination
+                    totalPages={totalPages}
+                    page={page}
+                    pageRangeDisplayed={2}
+                    // onPageChange={this.handlePageClick}
+                  />
                 </div>
               </div>
             </div>
@@ -224,9 +233,9 @@ const rxForm = reduxForm({
 })(CategoryListPage);
 
 const mapStateToProps = state => {
-  const { loading, categories } = state.category;
+  const { loading, categories, totalPages, page } = state.category;
   const { redirectToLogin } = state.core;
-  return { loading, categories, redirectToLogin };
+  return { loading, categories, redirectToLogin, totalPages, page };
 };
 
 const mapDispatchToProps = dispatch => {
