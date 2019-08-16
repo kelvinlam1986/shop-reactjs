@@ -8,9 +8,10 @@ import {
   LOGIN_REQUEST
 } from "./core-action-creator";
 import auth from "../auth/auth-helper";
+import { getBranchFromCache } from "./core-helper";
 
 const coreInitialState = {
-  branch: null,
+  branch: getBranchFromCache(),
   loading: false,
   redirectToLogin: false,
   username: auth.getUserNameFromCache(),

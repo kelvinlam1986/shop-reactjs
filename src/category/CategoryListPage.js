@@ -7,11 +7,14 @@ import {
   getCategoriesAction,
   loadCurrentCategory
 } from "../category/category-action-creator";
+import auth from "../auth/auth-helper";
+import { putCategory } from "../category/category-api";
 import config from "../config";
 import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
+import Alert from "react-s-alert";
 import _ from "lodash";
 
 const validate = values => {
@@ -37,8 +40,7 @@ class CategoryListPage extends Component {
         page: 0,
         pageSize: config.pageSize,
         keyword: ""
-      },
-      currentCategory: {}
+      }
     };
 
     this.delayedCallback = _.debounce(this.search, 1000);
@@ -107,7 +109,20 @@ class CategoryListPage extends Component {
     );
   };
 
-  saveCategory = () => {};
+  saveCategory = values => {
+    const { dispatch } = this.props;
+    dispatch(() => dispatch(reset("CategoryListPage")));
+    this.setState({ isShowModal: false });
+    const jwt = auth.isAuthenticated();
+    putCategory(jwt, { name: values.name }, values.id).then(
+      result => this.getCategories(),
+      error => {
+        console.log("we are here", error);
+        Alert.error("error");
+      }
+    );
+    console.log(values);
+  };
 
   render() {
     const { isShowModal, title } = this.state;
@@ -118,7 +133,8 @@ class CategoryListPage extends Component {
       loading,
       redirectToLogin,
       totalPages,
-      page
+      page,
+      handleSubmit
     } = this.props;
     const from = { pathname: "/signin" };
     if (redirectToLogin) {
@@ -238,7 +254,7 @@ class CategoryListPage extends Component {
           title={title}
           hiddenFooter={false}
           showCancel={true}
-          clickOK={this.saveCategory}
+          clickOK={handleSubmit(this.saveCategory)}
           okText="Lưu"
           pristine={pristine}
           submitting={submitting}

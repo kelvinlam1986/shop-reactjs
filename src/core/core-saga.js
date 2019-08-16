@@ -11,6 +11,7 @@ import {
   loginSuccess,
   loginFailed
 } from "./core-action-creator";
+import { setBranchToCache } from "./core-helper";
 import Alert from "react-s-alert";
 
 const login = user => {
@@ -64,6 +65,7 @@ function* getBranchSaga() {
         yield put(redirectToLoginAction());
       } else {
         yield put(getBranchActionSuccess(result.payload));
+        yield call(() => setBranchToCache(result.payload));
       }
     }
   } catch (err) {
