@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
-import { Form } from "react-bootstrap";
-import { Field, reduxForm, reset } from "redux-form";
+import { reset } from "redux-form";
 import { connect } from "react-redux";
 import {
   getCategoriesAction,
@@ -10,25 +9,11 @@ import {
 import auth from "../auth/auth-helper";
 import { putCategory } from "../category/category-api";
 import config from "../config";
-import RegisterModal from "../components/RegisterModal";
-import renderInput from "../components/AdvanceTextField";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 import Alert from "react-s-alert";
 import _ from "lodash";
-
-const validate = values => {
-  const errors = {};
-  const requiredFields = ["name"];
-  requiredFields.forEach(field => {
-    if (!values[field]) {
-      if (field === "name") {
-        errors[field] = `Bạn phải nhập Loại sản phẩm !`;
-      }
-    }
-  });
-  return errors;
-};
+import CategoryEditPage from "./CategoryEditPage";
 
 class CategoryListPage extends Component {
   constructor(props) {
@@ -71,8 +56,8 @@ class CategoryListPage extends Component {
   };
 
   handleClose = e => {
-    const { dispatch } = this.props;
-    dispatch(() => dispatch(reset("CategoryListPage")));
+    const { resetEditPage } = this.props;
+    resetEditPage();
     this.setState({ isShowModal: false });
   };
 
@@ -110,18 +95,16 @@ class CategoryListPage extends Component {
   };
 
   saveCategory = values => {
-    const { dispatch } = this.props;
-    dispatch(() => dispatch(reset("CategoryListPage")));
+    const { resetEditPage } = this.props;
+    resetEditPage();
     this.setState({ isShowModal: false });
     const jwt = auth.isAuthenticated();
     putCategory(jwt, { name: values.name }, values.id).then(
       result => this.getCategories(),
       error => {
-        console.log("we are here", error);
-        Alert.error("error");
+        Alert.error(error.errorMessge);
       }
     );
-    console.log(values);
   };
 
   render() {
@@ -133,8 +116,7 @@ class CategoryListPage extends Component {
       loading,
       redirectToLogin,
       totalPages,
-      page,
-      handleSubmit
+      page
     } = this.props;
     const from = { pathname: "/signin" };
     if (redirectToLogin) {
@@ -247,65 +229,40 @@ class CategoryListPage extends Component {
             </div>
           </div>
         </section>
-        <RegisterModal
+        <CategoryEditPage
           isShowModal={isShowModal}
           handleClose={this.handleClose}
           container={this}
           title={title}
-          hiddenFooter={false}
-          showCancel={true}
-          clickOK={handleSubmit(this.saveCategory)}
-          okText="Lưu"
+          saveCategory={this.saveCategory}
           pristine={pristine}
           submitting={submitting}
-        >
-          <Form>
-            <Field
-              name="name"
-              component={renderInput}
-              label="Loại sản phẩm"
-              autofocus
-            />
-          </Form>
-        </RegisterModal>
+        />
       </React.Fragment>
     );
   }
 }
-
-const rxForm = reduxForm({
-  form: "CategoryListPage",
-  enableReinitialize: true,
-  validate
-})(CategoryListPage);
-
 const mapStateToProps = state => {
-  const {
-    loading,
-    categories,
-    totalPages,
-    page,
-    currentCategory
-  } = state.category;
+  const { loading, categories, totalPages, page } = state.category;
   const { redirectToLogin } = state.core;
   return {
     loading,
     categories,
     redirectToLogin,
     totalPages,
-    page,
-    initialValues: currentCategory
+    page
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     getCategories: params => dispatch(getCategoriesAction(params)),
-    load: data => dispatch(loadCurrentCategory(data))
+    load: data => dispatch(loadCurrentCategory(data)),
+    resetEditPage: () => dispatch(reset("CategoryEditPage"))
   };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(rxForm);
+)(CategoryListPage);
