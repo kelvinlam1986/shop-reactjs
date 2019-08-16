@@ -13,7 +13,7 @@ import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 import Alert from "react-s-alert";
 import _ from "lodash";
-import CategoryEditPage from "./CategoryEditPage";
+import CategoryEdit from "./CategoryEdit";
 
 class CategoryListPage extends Component {
   constructor(props) {
@@ -100,7 +100,10 @@ class CategoryListPage extends Component {
     this.setState({ isShowModal: false });
     const jwt = auth.isAuthenticated();
     putCategory(jwt, { name: values.name }, values.id).then(
-      result => this.getCategories(),
+      result => {
+        Alert.success("Lưu loại sản phẩm thành công");
+        this.getCategories();
+      },
       error => {
         Alert.error(error.errorMessge);
       }
@@ -229,7 +232,7 @@ class CategoryListPage extends Component {
             </div>
           </div>
         </section>
-        <CategoryEditPage
+        <CategoryEdit
           isShowModal={isShowModal}
           handleClose={this.handleClose}
           container={this}

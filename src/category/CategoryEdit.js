@@ -18,7 +18,7 @@ const validate = values => {
   return errors;
 };
 
-class CategoryEditPage extends Component {
+class CategoryEdit extends Component {
   render() {
     const {
       handleSubmit,
@@ -67,6 +67,6 @@ const rxForm = reduxForm({
   form: "CategoryEditPage",
   enableReinitialize: true,
   validate
-})(CategoryEditPage);
+})(CategoryEdit);
 
 export default connect(mapStateToProps)(rxForm);
