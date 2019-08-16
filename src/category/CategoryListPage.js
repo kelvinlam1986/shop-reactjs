@@ -99,14 +99,19 @@ class CategoryListPage extends Component {
 
   updateCategory = values => {
     const { resetEditPage, resetCurrentCategory } = this.props;
-    resetEditPage();
+
     this.setState({ isShowModal: false });
     const jwt = auth.isAuthenticated();
     putCategory(jwt, { name: values.name }, values.id).then(
       result => {
-        resetCurrentCategory();
-        Alert.success("Lưu loại sản phẩm thành công");
-        this.getCategories();
+        if (result.errorMessage) {
+          Alert.error(result.errorMessage);
+        } else {
+          resetEditPage();
+          resetCurrentCategory();
+          Alert.success("Lưu loại sản phẩm thành công");
+          this.getCategories();
+        }
       },
       error => {
         Alert.error(error.errorMessge);

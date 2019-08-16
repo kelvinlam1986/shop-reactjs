@@ -35,13 +35,17 @@ class CategoryAddNew extends Component {
 
   insertCategory = values => {
     const { resetAddForm, getCategories, resetAddNewCategory } = this.props;
-    resetAddForm();
     const jwt = auth.isAuthenticated();
     postCategory(jwt, { name: values.name }).then(
       result => {
-        resetAddNewCategory();
-        Alert.success("Lưu loại sản phẩm thành công");
-        getCategories();
+        if (result.errorMessage) {
+          Alert.error(result.errorMessage);
+        } else {
+          resetAddForm();
+          resetAddNewCategory();
+          Alert.success("Lưu loại sản phẩm thành công");
+          getCategories();
+        }
       },
       error => {
         Alert.error(error.errorMessge);
