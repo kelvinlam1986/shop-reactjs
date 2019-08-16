@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { Form } from "react-bootstrap";
-import { Field, reduxForm } from "redux-form";
+import { Field, reduxForm, reset } from "redux-form";
 import { connect } from "react-redux";
 import {
   getCategoriesAction,
@@ -69,8 +69,8 @@ class CategoryListPage extends Component {
   };
 
   handleClose = e => {
-    const { dispatch, destroy } = this.props;
-    dispatch(() => destroy());
+    const { dispatch } = this.props;
+    dispatch(() => dispatch(reset("CategoryListPage")));
     this.setState({ isShowModal: false });
   };
 
@@ -96,7 +96,6 @@ class CategoryListPage extends Component {
   };
 
   handlePageClick = e => {
-    console.log("selected", e.selected);
     this.setState(
       {
         params: {
