@@ -14,6 +14,7 @@ import Pagination from "../components/Pagination";
 import Alert from "react-s-alert";
 import _ from "lodash";
 import CategoryEdit from "./CategoryEdit";
+import CategoryAddNew from "./CategoryAddNew";
 
 class CategoryListPage extends Component {
   constructor(props) {
@@ -152,35 +153,7 @@ class CategoryListPage extends Component {
                   <h3 className="box-title">Thêm danh mục mới</h3>
                 </div>
                 <div className="box-body">
-                  <form>
-                    <div className="form-group">
-                      <label htmlFor="date">Danh mục</label>
-                      <div className="input-group col-md-12">
-                        <input
-                          type="text"
-                          className="form-control pull-right"
-                          id="date"
-                          name="category"
-                          placeholder="Danh mục"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <div className="input-group">
-                        <button
-                          className="btn btn-primary"
-                          id="daterange-btn"
-                          style={{ marginRight: "5px" }}
-                        >
-                          Lưu lại
-                        </button>
-                        <button className="btn btn-danger" id="daterange-btn">
-                          Xóa
-                        </button>
-                      </div>
-                    </div>
-                  </form>
+                  <CategoryAddNew />
                 </div>
               </div>
             </div>
