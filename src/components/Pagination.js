@@ -5,7 +5,7 @@ import "./Pagination.css";
 export default class Pagination extends Component {
   render() {
     let { totalPages, page, pageRangeDisplayed, onPageChange } = this.props;
-    let initPage = page;
+    let initPage = page - 1;
     return (
       totalPages > 0 && (
         <ReactPaginate

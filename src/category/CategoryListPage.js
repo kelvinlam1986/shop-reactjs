@@ -4,6 +4,7 @@ import { Form } from "react-bootstrap";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import { getCategoriesAction } from "../category/category-action-creator";
+import config from "../config";
 import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
 import Loading from "../components/Loading";
@@ -31,7 +32,7 @@ class CategoryListPage extends Component {
       title: "Thông tin chi tiết",
       params: {
         page: 0,
-        pageSize: 20,
+        pageSize: config.pageSize,
         keyword: ""
       }
     };
@@ -75,6 +76,19 @@ class CategoryListPage extends Component {
 
   handleChange = e => {
     this.setState({ value: e.target.value });
+  };
+
+  handlePageClick = e => {
+    console.log("selected", e.selected);
+    this.setState(
+      {
+        params: {
+          ...this.state.params,
+          page: e.selected
+        }
+      },
+      () => this.getCategories()
+    );
   };
 
   saveCategory = () => {};
@@ -194,7 +208,7 @@ class CategoryListPage extends Component {
                     totalPages={totalPages}
                     page={page}
                     pageRangeDisplayed={2}
-                    // onPageChange={this.handlePageClick}
+                    onPageChange={this.handlePageClick}
                   />
                 </div>
               </div>
