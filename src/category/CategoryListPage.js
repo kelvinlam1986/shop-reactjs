@@ -3,7 +3,10 @@ import { Link, Redirect } from "react-router-dom";
 import { Form } from "react-bootstrap";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { getCategoriesAction } from "../category/category-action-creator";
+import {
+  getCategoriesAction,
+  loadCurrentCategory
+} from "../category/category-action-creator";
 import config from "../config";
 import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
@@ -34,7 +37,8 @@ class CategoryListPage extends Component {
         page: 0,
         pageSize: config.pageSize,
         keyword: ""
-      }
+      },
+      currentCategory: {}
     };
 
     this.delayedCallback = _.debounce(this.search, 1000);
@@ -70,8 +74,21 @@ class CategoryListPage extends Component {
     this.setState({ isShowModal: false });
   };
 
-  handleShow = () => {
-    this.setState({ isShowModal: true });
+  showDetail = index => {
+    this.handleShow(index);
+  };
+
+  handleShow = index => {
+    const currentCategory = this.props.categories[index];
+    this.setState(
+      {
+        isShowModal: true,
+        title: `Thông tin chi tiết: ${currentCategory.name}`
+      },
+      () => {
+        this.props.load(this.props.categories[index]);
+      }
+    );
   };
 
   handleChange = e => {
@@ -194,7 +211,7 @@ class CategoryListPage extends Component {
                                 <span
                                   style={{ color: "#fff", cursor: "pointer" }}
                                   className="small-box-footer"
-                                  onClick={this.handleShow}
+                                  onClick={() => this.showDetail(index)}
                                 >
                                   <i className="glyphicon glyphicon-edit text-blue" />
                                 </span>
@@ -243,18 +260,33 @@ class CategoryListPage extends Component {
 
 const rxForm = reduxForm({
   form: "CategoryListPage",
+  enableReinitialize: true,
   validate
 })(CategoryListPage);
 
 const mapStateToProps = state => {
-  const { loading, categories, totalPages, page } = state.category;
+  const {
+    loading,
+    categories,
+    totalPages,
+    page,
+    currentCategory
+  } = state.category;
   const { redirectToLogin } = state.core;
-  return { loading, categories, redirectToLogin, totalPages, page };
+  return {
+    loading,
+    categories,
+    redirectToLogin,
+    totalPages,
+    page,
+    initialValues: currentCategory
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getCategories: params => dispatch(getCategoriesAction(params))
+    getCategories: params => dispatch(getCategoriesAction(params)),
+    load: data => dispatch(loadCurrentCategory(data))
   };
 };
 
