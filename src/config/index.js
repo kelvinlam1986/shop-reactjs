@@ -14,7 +14,7 @@ const config = {
       ? "v1"
       : process.env.DEFAULT_API_VERSIONING,
   pageSize:
-    process.env.NODE_ENV === "development" ? 20 : process.env.DEFAULT_PAGE_SIZE
+    process.env.NODE_ENV === "development" ? 10 : process.env.DEFAULT_PAGE_SIZE
 };
 
 export default config;

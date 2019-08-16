@@ -58,18 +58,33 @@ const putCategory = (credentital, params, id) => {
     });
 };
 
-// return fetch("/api/posts/unlike", {
-//   method: "PUT",
-//   headers: {
-//     Accept: "application/json",
-//     "Content-Type": "application/json",
-//     Authorization: "Bearer " + credential.t
-//   },
-//   body: JSON.stringify({ userId: params.userId, postId: postId })
-// })
-//   .then(respsonse => {
-//     return respsonse.json();
-//   })
-//   .catch(err => console.log(err));
+const postCategory = (credentital, params) => {
+  return fetch(Urls.GetCategories, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + credentital.access_token
+    },
+    body: JSON.stringify({ name: params.name })
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        if (
+          response.status === 404 ||
+          response.status === 400 ||
+          response.status === 500
+        ) {
+          return response.json();
+        } else {
+          return Error(`Request rejected with status ${response.status}`);
+        }
+      }
+    })
+    .catch(err => {
+      throw err;
+    });
+};
 
-export { getCategories, putCategory };
+export { getCategories, putCategory, postCategory };

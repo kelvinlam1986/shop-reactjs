@@ -4,7 +4,8 @@ import { reset } from "redux-form";
 import { connect } from "react-redux";
 import {
   getCategoriesAction,
-  loadCurrentCategory
+  loadCurrentCategory,
+  resetCurrentCategory
 } from "../category/category-action-creator";
 import auth from "../auth/auth-helper";
 import { putCategory } from "../category/category-api";
@@ -57,8 +58,9 @@ class CategoryListPage extends Component {
   };
 
   handleClose = e => {
-    const { resetEditPage } = this.props;
+    const { resetEditPage, resetCurrentCategory } = this.props;
     resetEditPage();
+    resetCurrentCategory();
     this.setState({ isShowModal: false });
   };
 
@@ -95,13 +97,14 @@ class CategoryListPage extends Component {
     );
   };
 
-  saveCategory = values => {
-    const { resetEditPage } = this.props;
+  updateCategory = values => {
+    const { resetEditPage, resetCurrentCategory } = this.props;
     resetEditPage();
     this.setState({ isShowModal: false });
     const jwt = auth.isAuthenticated();
     putCategory(jwt, { name: values.name }, values.id).then(
       result => {
+        resetCurrentCategory();
         Alert.success("Lưu loại sản phẩm thành công");
         this.getCategories();
       },
@@ -153,7 +156,7 @@ class CategoryListPage extends Component {
                   <h3 className="box-title">Thêm danh mục mới</h3>
                 </div>
                 <div className="box-body">
-                  <CategoryAddNew />
+                  <CategoryAddNew getCategories={this.getCategories} />
                 </div>
               </div>
             </div>
@@ -210,7 +213,7 @@ class CategoryListPage extends Component {
           handleClose={this.handleClose}
           container={this}
           title={title}
-          saveCategory={this.saveCategory}
+          saveCategory={this.updateCategory}
           pristine={pristine}
           submitting={submitting}
         />
@@ -234,7 +237,8 @@ const mapDispatchToProps = dispatch => {
   return {
     getCategories: params => dispatch(getCategoriesAction(params)),
     load: data => dispatch(loadCurrentCategory(data)),
-    resetEditPage: () => dispatch(reset("CategoryEditPage"))
+    resetEditPage: () => dispatch(reset("CategoryEditPage")),
+    resetCurrentCategory: () => dispatch(resetCurrentCategory())
   };
 };
 
