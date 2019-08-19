@@ -7,6 +7,7 @@ import {
   loadCurrentCategory,
   resetCurrentCategory
 } from "../category/category-action-creator";
+import { redirectToLoginAction } from "../core/core-action-creator";
 import auth from "../auth/auth-helper";
 import { putCategory } from "../category/category-api";
 import config from "../config";
@@ -98,25 +99,38 @@ class CategoryListPage extends Component {
   };
 
   updateCategory = values => {
-    const { resetEditPage, resetCurrentCategory } = this.props;
+    const {
+      resetEditPage,
+      resetCurrentCategory,
+      redirectLoginPage
+    } = this.props;
 
     this.setState({ isShowModal: false });
     const jwt = auth.isAuthenticated();
-    putCategory(jwt, { name: values.name }, values.id).then(
-      result => {
-        if (result.errorMessage) {
-          Alert.error(result.errorMessage);
-        } else {
+    putCategory(jwt, { name: values.name }, values.id)
+      .then(
+        result => {
           resetEditPage();
           resetCurrentCategory();
           Alert.success("Lưu loại sản phẩm thành công");
           this.getCategories();
+        },
+        error => {
+          if (error.errorCode) {
+            Alert.error(error.errorMessage);
+            if (error.errorCode === "401") {
+              redirectLoginPage();
+            }
+          } else {
+            redirectLoginPage();
+            Alert.error("Không thể kết nối đến server.");
+          }
         }
-      },
-      error => {
-        Alert.error(error.errorMessge);
-      }
-    );
+      )
+      .catch(err => {
+        redirectLoginPage();
+        Alert.error("Không thể kết nối đến server.");
+      });
   };
 
   render() {
@@ -243,7 +257,8 @@ const mapDispatchToProps = dispatch => {
     getCategories: params => dispatch(getCategoriesAction(params)),
     load: data => dispatch(loadCurrentCategory(data)),
     resetEditPage: () => dispatch(reset("CategoryEditPage")),
-    resetCurrentCategory: () => dispatch(resetCurrentCategory())
+    resetCurrentCategory: () => dispatch(resetCurrentCategory()),
+    redirectLoginPage: () => dispatch(redirectToLoginAction())
   };
 };
 

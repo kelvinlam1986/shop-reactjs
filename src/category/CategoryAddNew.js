@@ -11,6 +11,8 @@ import {
   loadAddNewCategory
 } from "./category-action-creator";
 
+import { redirectToLoginAction } from "../core/core-action-creator";
+
 const validate = values => {
   const errors = {};
   const requiredFields = ["name"];
@@ -34,23 +36,37 @@ class CategoryAddNew extends Component {
   };
 
   insertCategory = values => {
-    const { resetAddForm, getCategories, resetAddNewCategory } = this.props;
+    const {
+      resetAddForm,
+      getCategories,
+      resetAddNewCategory,
+      redirectLoginPage
+    } = this.props;
     const jwt = auth.isAuthenticated();
-    postCategory(jwt, { name: values.name }).then(
-      result => {
-        if (result.errorMessage) {
-          Alert.error(result.errorMessage);
-        } else {
+    postCategory(jwt, { name: values.name })
+      .then(
+        result => {
           resetAddForm();
           resetAddNewCategory();
           Alert.success("Lưu loại sản phẩm thành công");
           getCategories();
+        },
+        error => {
+          if (error.errorCode) {
+            Alert.error(error.errorMessage);
+            if (error.errorCode === "401") {
+              redirectLoginPage();
+            }
+          } else {
+            redirectLoginPage();
+            Alert.error("Không thể kết nối đến server.");
+          }
         }
-      },
-      error => {
-        Alert.error(error.errorMessge);
-      }
-    );
+      )
+      .catch(err => {
+        redirectLoginPage();
+        Alert.error("Không thể kết nối đến server.");
+      });
   };
 
   render() {
@@ -94,7 +110,8 @@ const mapDispatchToProps = dispatch => {
     },
     loadAddNewCategory: newCategory => {
       dispatch(loadAddNewCategory(newCategory));
-    }
+    },
+    redirectLoginPage: () => dispatch(redirectToLoginAction())
   };
 };
 

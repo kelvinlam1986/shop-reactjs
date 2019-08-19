@@ -29,23 +29,7 @@ const putCategory = (credentital, params, id) => {
     },
     body: JSON.stringify({ name: params.name })
   })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        if (
-          response.status === 404 ||
-          response.status === 400 ||
-          response.status === 500
-        ) {
-          return response.json();
-        } else {
-          return Promise.reject(
-            `Request rejected with status ${response.status}`
-          );
-        }
-      }
-    })
+    .then(response => handleJSONResponse(response))
     .catch(err => {
       throw err;
     });
@@ -60,21 +44,7 @@ const postCategory = (credentital, params) => {
     },
     body: JSON.stringify({ name: params.name })
   })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        if (
-          response.status === 404 ||
-          response.status === 400 ||
-          response.status === 500
-        ) {
-          return response.json();
-        } else {
-          return Error(`Request rejected with status ${response.status}`);
-        }
-      }
-    })
+    .then(response => handleJSONResponse(response))
     .catch(err => {
       throw err;
     });
