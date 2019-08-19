@@ -1,4 +1,5 @@
 import Urls from "./Url";
+import handleJSONResponse from "../core/handleResponse";
 
 const getBranchDefault = credentital => {
   return fetch(Urls.GetDefaultBranch, {
@@ -8,17 +9,7 @@ const getBranchDefault = credentital => {
       Authorization: "Bearer " + credentital.access_token
     }
   })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        if (response.status === 404) {
-          return response.json();
-        } else {
-          return Error(`Request rejected with status ${response.status}`);
-        }
-      }
-    })
+    .then(response => handleJSONResponse(response))
     .catch(err => {
       throw err;
     });

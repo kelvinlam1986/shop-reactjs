@@ -13,7 +13,7 @@ function handleJSONResponse(response) {
         )
       );
     } else {
-      return response.json();
+      return Promise.reject(Object.assign({}, response.json()));
     }
   }
 }

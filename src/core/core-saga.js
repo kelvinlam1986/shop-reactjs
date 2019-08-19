@@ -43,13 +43,36 @@ function* loginSaga(action) {
 }
 
 const getBranch = credential => {
-  return getBranchDefault(credential).then(result => {
-    if (result.errorCode === "404") {
-      return { isNotFound: true, payload: null };
-    } else {
-      return { payload: result };
+  return getBranchDefault(credential).then(
+    result => {
+      return { payload: result, error: null, isSignOut: false };
+    },
+    err => {
+      if (err.errorCode) {
+        if (err.errorCode === "404") {
+          return {
+            payload: null,
+            error: "Không tìm thấy chủ shop nào hết",
+            isSignOut: true
+          };
+        } else if (err.errorCode === "401") {
+          return {
+            payload: null,
+            error: err.errorMessage,
+            isSignOut: true
+          };
+        } else {
+          return {
+            payload: null,
+            error: err.errorMessage,
+            isSignOut: false
+          };
+        }
+      } else {
+        throw err;
+      }
     }
-  });
+  );
 };
 
 function* getBranchSaga() {
@@ -60,9 +83,13 @@ function* getBranchSaga() {
       yield put(redirectToLoginAction());
     } else {
       const result = yield call(() => getBranch(jwt));
-      if (result.isNotFound) {
-        yield call(() => Alert.error("Không tìm thấy chủ shop nào hết"));
-        yield put(redirectToLoginAction());
+      if (result.error) {
+        yield put(getBranchActionFailed(result.error));
+        yield call(() => Alert.error(result.error));
+        if (result.isSignOut === true) {
+          yield call(() => auth.signout());
+          yield put(redirectToLoginAction());
+        }
       } else {
         yield put(getBranchActionSuccess(result.payload));
         yield call(() => setBranchToCache(result.payload));
