@@ -1,4 +1,5 @@
 import Urls from "../core/Url";
+import handleJSONResponse from "../core/handleResponse";
 
 const getCategories = (credentital, params) => {
   const url =
@@ -13,17 +14,7 @@ const getCategories = (credentital, params) => {
       Authorization: "Bearer " + credentital.access_token
     }
   })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        if (response.status === 404) {
-          return response.json();
-        } else {
-          return Error(`Request rejected with status ${response.status}`);
-        }
-      }
-    })
+    .then(res => handleJSONResponse(res))
     .catch(err => {
       throw err;
     });
@@ -49,7 +40,9 @@ const putCategory = (credentital, params, id) => {
         ) {
           return response.json();
         } else {
-          return Error(`Request rejected with status ${response.status}`);
+          return Promise.reject(
+            `Request rejected with status ${response.status}`
+          );
         }
       }
     })
