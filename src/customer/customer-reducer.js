@@ -1,7 +1,9 @@
 import {
   GET_CUSTOMERS,
   GET_CUSTOMERS_SUCCESS,
-  GET_CUSTOMERS_FAILED
+  GET_CUSTOMERS_FAILED,
+  RESET_CURRENT_CUSTOMER,
+  LOAD_CURRENT_CUSTOMER
 } from "./customer-action-creator";
 
 const customerInitialState = {
@@ -12,7 +14,10 @@ const customerInitialState = {
   page: 1,
   currentCustomer: {
     id: 0,
-    name: ""
+    firstName: "",
+    lastName: "",
+    address: "",
+    contact: ""
   },
   addNewCustomer: {
     id: 0,
@@ -39,6 +44,20 @@ const customerReducer = (state = customerInitialState, action) => {
         loading: false,
         customers: null,
         error: action.payload.error
+      });
+    case RESET_CURRENT_CUSTOMER:
+      return Object.assign({}, state, {
+        currentCustomer: {
+          id: 0,
+          firstName: "",
+          lastName: "",
+          address: "",
+          contact: ""
+        }
+      });
+    case LOAD_CURRENT_CUSTOMER:
+      return Object.assign({}, state, {
+        currentCustomer: action.payload.currentCustomer
       });
     default:
       return state;

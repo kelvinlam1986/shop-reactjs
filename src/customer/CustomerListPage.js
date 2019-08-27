@@ -1,10 +1,16 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { reset } from "redux-form";
 import config from "../config";
-import { getCustomersAction } from "./customer-action-creator";
+import {
+  getCustomersAction,
+  resetCurrentCustomer,
+  loadCurrentCustomer
+} from "./customer-action-creator";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
+import CustomerEdit from "./CustomerEdit";
 import _ from "lodash";
 
 class CustomerListPage extends Component {
@@ -47,6 +53,13 @@ class CustomerListPage extends Component {
     this.props.getCustomers(this.state.params);
   };
 
+  handleClose = e => {
+    const { resetEditPage, resetCurrentCustomer } = this.props;
+    resetEditPage();
+    resetCurrentCustomer();
+    this.setState({ isShowModal: false });
+  };
+
   handlePageClick = e => {
     this.setState(
       {
@@ -56,6 +69,25 @@ class CustomerListPage extends Component {
         }
       },
       () => this.getCustomers()
+    );
+  };
+
+  updateCustomer = values => {};
+
+  showDetail = index => {
+    this.handleShow(index);
+  };
+
+  handleShow = index => {
+    const currentCustomer = this.props.customers[index];
+    this.setState(
+      {
+        isShowModal: true,
+        title: `Thông tin chi tiết: ${currentCustomer.firstName} ${currentCustomer.lastName}`
+      },
+      () => {
+        this.props.load(this.props.customers[index]);
+      }
     );
   };
 
@@ -135,13 +167,13 @@ class CustomerListPage extends Component {
                               <td>{customer.address}</td>
                               <td>{customer.contact}</td>
                               <td>
-                                <a
-                                  href="/ghty"
-                                  style={{ color: "#fff" }}
+                                <span
+                                  style={{ color: "#fff", cursor: "pointer" }}
                                   className="small-box-footer"
+                                  onClick={() => this.showDetail(index)}
                                 >
                                   <i className="glyphicon glyphicon-edit text-blue" />
-                                </a>
+                                </span>
                               </td>
                             </tr>
                           );
@@ -159,6 +191,15 @@ class CustomerListPage extends Component {
             </div>
           </div>
         </section>
+        <CustomerEdit
+          isShowModal={isShowModal}
+          handleClose={this.handleClose}
+          container={this}
+          title={title}
+          saveCustomer={this.updateCustomer}
+          pristine={pristine}
+          submitting={submitting}
+        />
       </React.Fragment>
     );
   }
@@ -178,10 +219,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getCustomers: params => dispatch(getCustomersAction(params))
-    // load: data => dispatch(loadCurrentCategory(data)),
-    // resetEditPage: () => dispatch(reset("CategoryEditPage")),
-    // resetCurrentCategory: () => dispatch(resetCurrentCategory()),
+    getCustomers: params => dispatch(getCustomersAction(params)),
+    load: data => dispatch(loadCurrentCustomer(data)),
+    resetEditPage: () => dispatch(reset("CustomerEditPage")),
+    resetCurrentCustomer: () => dispatch(resetCurrentCustomer())
     // redirectLoginPage: () => dispatch(redirectToLoginAction())
   };
 };
