@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import config from "../config";
 import { getCustomersAction } from "./customer-action-creator";
 import Loading from "../components/Loading";
+import Pagination from "../components/Pagination";
 import _ from "lodash";
 
 class CustomerListPage extends Component {
@@ -44,6 +45,18 @@ class CustomerListPage extends Component {
 
   getCustomers = () => {
     this.props.getCustomers(this.state.params);
+  };
+
+  handlePageClick = e => {
+    this.setState(
+      {
+        params: {
+          ...this.state.params,
+          page: e.selected
+        }
+      },
+      () => this.getCustomers()
+    );
   };
 
   render() {
@@ -135,6 +148,12 @@ class CustomerListPage extends Component {
                         })}
                     </tbody>
                   </table>
+                  <Pagination
+                    totalPages={totalPages}
+                    page={page}
+                    pageRangeDisplayed={2}
+                    onPageChange={this.handlePageClick}
+                  />
                 </div>
               </div>
             </div>
