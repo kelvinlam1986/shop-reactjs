@@ -8,11 +8,23 @@ import renderTextArea from "../components/AdvanceTextArea";
 
 const validate = values => {
   const errors = {};
-  const requiredFields = ["name"];
+  const requiredFields = ["firstName", "lastName", "address", "contact"];
   requiredFields.forEach(field => {
     if (!values[field]) {
-      if (field === "name") {
-        errors[field] = `Bạn phải nhập Loại sản phẩm !`;
+      if (field === "firstName") {
+        errors[field] = `Bạn phải nhập Họ khách hàng !`;
+      }
+
+      if (field === "lastName") {
+        errors[field] = "Bạn phải nhập Tên khách hàng !";
+      }
+
+      if (field === "address") {
+        errors[field] = "Bạn phải nhập Địa chỉ !";
+      }
+
+      if (field === "contact") {
+        errors[field] = "Bạn phải nhập Điện thoại !";
       }
     }
   });
@@ -58,20 +70,9 @@ class CustomerEdit extends Component {
             name="lastName"
             component={renderInput}
             label="Tên khách hàng"
-            autofocus
           />
-          <Field
-            name="address"
-            component={renderTextArea}
-            label="Địa chỉ"
-            autofocus
-          />
-          <Field
-            name="contact"
-            component={renderInput}
-            label="Điện thoại"
-            autofocus
-          />
+          <Field name="address" component={renderTextArea} label="Địa chỉ" />
+          <Field name="contact" component={renderInput} label="Điện thoại" />
         </Form>
       </RegisterModal>
     );
