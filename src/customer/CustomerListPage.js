@@ -177,6 +177,25 @@ class CustomerListPage extends Component {
               <div className="box box-primary">
                 <div className="box-header">
                   <h3 className="box-title">Danh sách khách hàng</h3>
+                  <div className="box-tools">
+                    <div
+                      className="input-group input-group-sm hidden-xs"
+                      style={{ width: "200px" }}
+                    >
+                      <input
+                        type="text"
+                        name="table_search"
+                        className="form-control pull-right"
+                        placeholder="Tìm kiếm"
+                      />
+
+                      <div className="input-group-btn">
+                        <button type="submit" className="btn btn-default">
+                          <i className="fa fa-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className="box-body">
                   <table
