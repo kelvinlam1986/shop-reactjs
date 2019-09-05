@@ -59,13 +59,13 @@ class CustomerEdit extends Component {
       >
         <Form>
           <Field
-            name="firstName"
+            name="lastName"
             component={renderInput}
             label="Họ khách hàng"
             autofocus
           />
           <Field
-            name="lastName"
+            name="firstName"
             component={renderInput}
             label="Tên khách hàng"
           />

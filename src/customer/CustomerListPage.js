@@ -137,6 +137,15 @@ class CustomerListPage extends Component {
     );
   };
 
+  onSearchChange = e => {
+    e.persist();
+    this.delayedCallback(e);
+  };
+
+  onSearchClick = e => {
+    this.getCustomers();
+  };
+
   render() {
     const { isShowModal, title } = this.state;
     const {
@@ -187,10 +196,15 @@ class CustomerListPage extends Component {
                         name="table_search"
                         className="form-control pull-right"
                         placeholder="Tìm kiếm"
+                        onChange={this.onSearchChange}
                       />
 
                       <div className="input-group-btn">
-                        <button type="submit" className="btn btn-default">
+                        <button
+                          type="submit"
+                          className="btn btn-default"
+                          onClick={this.onSearchClick}
+                        >
                           <i className="fa fa-search"></i>
                         </button>
                       </div>

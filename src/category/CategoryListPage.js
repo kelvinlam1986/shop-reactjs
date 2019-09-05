@@ -134,6 +134,15 @@ class CategoryListPage extends Component {
       });
   };
 
+  onChangeSearch = e => {
+    e.persist();
+    this.delayedCallback(e);
+  };
+
+  onClickSearch = e => {
+    this.getCategories();
+  };
+
   render() {
     const { isShowModal, title } = this.state;
     const {
@@ -194,10 +203,15 @@ class CategoryListPage extends Component {
                         name="table_search"
                         className="form-control pull-right"
                         placeholder="Tìm kiếm"
+                        onChange={this.onChangeSearch}
                       />
 
                       <div className="input-group-btn">
-                        <button type="submit" className="btn btn-default">
+                        <button
+                          type="submit"
+                          className="btn btn-default"
+                          onClick={this.onClickSearch}
+                        >
                           <i className="fa fa-search"></i>
                         </button>
                       </div>
