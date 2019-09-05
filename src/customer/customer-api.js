@@ -18,4 +18,27 @@ const getCustomers = (credentital, params) => {
     });
 };
 
-export { getCustomers };
+const putCustomer = (credentital, params, id) => {
+  return fetch(Urls.PutCustomer + `/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + credentital.access_token
+    },
+    body: JSON.stringify({
+      firstName: params.firstName,
+      lastName: params.lastName,
+      address: params.address,
+      contact: params.contact
+    })
+  })
+    .then(
+      response => handleJSONResponse(response),
+      error => handleJSONResponse(error)
+    )
+    .catch(err => {
+      throw err;
+    });
+};
+
+export { getCustomers, putCustomer };

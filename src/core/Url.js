@@ -7,7 +7,8 @@ const Urls = {
   SignOut: `${protocol}://${config.hostName}:${config.apiPort}/api/account/signout`,
   GetDefaultBranch: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/branch/${config.defaultBranch}`,
   GetCategories: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/category`,
-  GetCustomers: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer?branchId=${config.defaultBranch}`
+  GetCustomers: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer?branchId=${config.defaultBranch}`,
+  PutCustomer: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer`
 };
 
 export default Urls;

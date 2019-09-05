@@ -1,4 +1,5 @@
 function handleJSONResponse(response) {
+  console.log("we are here");
   if (response.ok) {
     return response.json();
   } else {
@@ -13,7 +14,9 @@ function handleJSONResponse(response) {
         )
       );
     } else {
-      return Promise.reject(Object.assign({}, response.json()));
+      let json = response.json();
+      // console.log("we are here 2", response.json());
+      return json.then(Promise.reject.bind(Promise));
     }
   }
 }

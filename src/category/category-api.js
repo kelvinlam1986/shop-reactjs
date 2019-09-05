@@ -4,9 +4,7 @@ import handleJSONResponse from "../core/handleResponse";
 const getCategories = (credentital, params) => {
   const url =
     Urls.GetCategories +
-    `?keyword=${params.keyword}&page=${params.page}&pageSize=${
-      params.pageSize
-    }`;
+    `?keyword=${params.keyword}&page=${params.page}&pageSize=${params.pageSize}`;
   return fetch(url, {
     method: "GET",
     headers: {
@@ -29,7 +27,10 @@ const putCategory = (credentital, params, id) => {
     },
     body: JSON.stringify({ name: params.name })
   })
-    .then(response => handleJSONResponse(response))
+    .then(
+      response => handleJSONResponse(response),
+      err => handleJSONResponse(err)
+    )
     .catch(err => {
       throw err;
     });
@@ -44,7 +45,10 @@ const postCategory = (credentital, params) => {
     },
     body: JSON.stringify({ name: params.name })
   })
-    .then(response => handleJSONResponse(response))
+    .then(
+      response => handleJSONResponse(response),
+      err => handleJSONResponse(err)
+    )
     .catch(err => {
       throw err;
     });

@@ -2,15 +2,19 @@ import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { reset } from "redux-form";
+import Alert from "react-s-alert";
 import config from "../config";
 import {
   getCustomersAction,
   resetCurrentCustomer,
   loadCurrentCustomer
 } from "./customer-action-creator";
+import { redirectToLoginAction } from "../core/core-action-creator";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 import CustomerEdit from "./CustomerEdit";
+import auth from "../auth/auth-helper";
+import { putCustomer } from "./customer-api";
 import _ from "lodash";
 
 class CustomerListPage extends Component {
@@ -72,7 +76,49 @@ class CustomerListPage extends Component {
     );
   };
 
-  updateCustomer = values => {};
+  updateCustomer = values => {
+    const {
+      resetEditPage,
+      resetCurrentCustomer,
+      redirectLoginPage
+    } = this.props;
+
+    this.setState({ isShowModal: false });
+    const jwt = auth.isAuthenticated();
+    putCustomer(
+      jwt,
+      {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        address: values.address,
+        contact: values.contact
+      },
+      values.id
+    )
+      .then(
+        result => {
+          resetEditPage();
+          resetCurrentCustomer();
+          Alert.success("Lưu khách hàng thành công");
+          this.getCustomers();
+        },
+        error => {
+          if (error.errorCode) {
+            Alert.error(error.errorMessage);
+            if (error.errorCode === "401") {
+              redirectLoginPage();
+            }
+          } else {
+            redirectLoginPage();
+            Alert.error("Không thể kết nối đến server.");
+          }
+        }
+      )
+      .catch(err => {
+        redirectLoginPage();
+        Alert.error("Không thể kết nối đến server.");
+      });
+  };
 
   showDetail = index => {
     this.handleShow(index);
@@ -222,8 +268,8 @@ const mapDispatchToProps = dispatch => {
     getCustomers: params => dispatch(getCustomersAction(params)),
     load: data => dispatch(loadCurrentCustomer(data)),
     resetEditPage: () => dispatch(reset("CustomerEditPage")),
-    resetCurrentCustomer: () => dispatch(resetCurrentCustomer())
-    // redirectLoginPage: () => dispatch(redirectToLoginAction())
+    resetCurrentCustomer: () => dispatch(resetCurrentCustomer()),
+    redirectLoginPage: () => dispatch(redirectToLoginAction())
   };
 };
 

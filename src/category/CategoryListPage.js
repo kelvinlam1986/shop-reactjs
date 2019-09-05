@@ -116,6 +116,7 @@ class CategoryListPage extends Component {
           this.getCategories();
         },
         error => {
+          console.log("error", error);
           if (error.errorCode) {
             Alert.error(error.errorMessage);
             if (error.errorCode === "401") {

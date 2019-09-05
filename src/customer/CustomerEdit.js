@@ -44,8 +44,6 @@ class CustomerEdit extends Component {
       submitting
     } = this.props;
 
-    console.log("handleSubmit", handleSubmit, "saveCustomer", saveCustomer);
-
     return (
       <RegisterModal
         isShowModal={isShowModal}
