@@ -3,7 +3,8 @@ import {
   GET_CUSTOMERS_SUCCESS,
   GET_CUSTOMERS_FAILED,
   RESET_CURRENT_CUSTOMER,
-  LOAD_CURRENT_CUSTOMER
+  LOAD_CURRENT_CUSTOMER,
+  SET_LOADING_CUSTOMER
 } from "./customer-action-creator";
 
 const customerInitialState = {
@@ -27,6 +28,10 @@ const customerInitialState = {
 
 const customerReducer = (state = customerInitialState, action) => {
   switch (action.type) {
+    case SET_LOADING_CUSTOMER:
+      return Object.assign({}, state, {
+        loading: action.isLoading
+      });
     case GET_CUSTOMERS:
       return Object.assign({}, state, {
         loading: true

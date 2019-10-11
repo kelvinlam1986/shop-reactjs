@@ -5,6 +5,7 @@ const getCategories = (credentital, params) => {
   const url =
     Urls.GetCategories +
     `?keyword=${params.keyword}&page=${params.page}&pageSize=${params.pageSize}`;
+
   return fetch(url, {
     method: "GET",
     headers: {

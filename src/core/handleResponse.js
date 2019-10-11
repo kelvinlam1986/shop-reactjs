@@ -1,5 +1,4 @@
 function handleJSONResponse(response) {
-  console.log("we are here");
   if (response.ok) {
     return response.json();
   } else {

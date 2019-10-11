@@ -5,6 +5,14 @@ const LOAD_CURRENT_CATEGORY = "LOAD_CURRENT_CATEGORY";
 const RESET_CURRENT_CATEGORY = "RESET_CURRENT_CATEGORY";
 const LOAD_ADD_NEW_CATEGORY = "LOAD_ADD_NEW_CATEGORY";
 const RESET_ADD_NEW_CATEGORY = "RESET_ADD_NEW_CATEGORY";
+const SET_LOADING_CATEGORY = "SET_LOADING_CATEGORY";
+
+const setLoadingCategory = isLoading => {
+  return {
+    type: SET_LOADING_CATEGORY,
+    isLoading: isLoading
+  };
+};
 
 const getCategoriesAction = params => {
   return {
@@ -52,11 +60,13 @@ export {
   RESET_CURRENT_CATEGORY,
   LOAD_ADD_NEW_CATEGORY,
   RESET_ADD_NEW_CATEGORY,
+  SET_LOADING_CATEGORY,
   getCategoriesAction,
   getCategoriesActionSuccess,
   getCategoriesActionFailed,
   loadCurrentCategory,
   resetCurrentCategory,
   loadAddNewCategory,
-  resetAddNewCategory
+  resetAddNewCategory,
+  setLoadingCategory
 };

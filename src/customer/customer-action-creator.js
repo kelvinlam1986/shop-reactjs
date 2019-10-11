@@ -3,6 +3,14 @@ const GET_CUSTOMERS_SUCCESS = "GET_CUSTOMERS_SUCCESS";
 const GET_CUSTOMERS_FAILED = "GET_CUSTOMERS_FAILED";
 const RESET_CURRENT_CUSTOMER = "RESET_CURRENT_CUSTOMER";
 const LOAD_CURRENT_CUSTOMER = "LOAD_CURRENT_CUSTOMER";
+const SET_LOADING_CUSTOMER = "SET_LOADING_CUSTOMER";
+
+const setLoadingCustomer = isLoading => {
+  return {
+    type: SET_LOADING_CUSTOMER,
+    isLoading: isLoading
+  };
+};
 
 const getCustomersAction = params => {
   return {
@@ -40,9 +48,11 @@ export {
   GET_CUSTOMERS_FAILED,
   RESET_CURRENT_CUSTOMER,
   LOAD_CURRENT_CUSTOMER,
+  SET_LOADING_CUSTOMER,
   getCustomersAction,
   getCustomersActionFailed,
   getCustomersActionSuccess,
   resetCurrentCustomer,
-  loadCurrentCustomer
+  loadCurrentCustomer,
+  setLoadingCustomer
 };

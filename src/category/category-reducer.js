@@ -5,7 +5,8 @@ import {
   LOAD_CURRENT_CATEGORY,
   RESET_CURRENT_CATEGORY,
   LOAD_ADD_NEW_CATEGORY,
-  RESET_ADD_NEW_CATEGORY
+  RESET_ADD_NEW_CATEGORY,
+  SET_LOADING_CATEGORY
 } from "./category-action-creator";
 
 const categoryInitialState = {
@@ -26,6 +27,10 @@ const categoryInitialState = {
 
 const categoryReducer = (state = categoryInitialState, action) => {
   switch (action.type) {
+    case SET_LOADING_CATEGORY:
+      return Object.assign({}, state, {
+        loading: action.isLoading
+      });
     case GET_CATEGORIES:
       return Object.assign({}, state, {
         loading: true

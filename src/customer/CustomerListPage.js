@@ -7,7 +7,8 @@ import config from "../config";
 import {
   getCustomersAction,
   resetCurrentCustomer,
-  loadCurrentCustomer
+  loadCurrentCustomer,
+  setLoadingCustomer
 } from "./customer-action-creator";
 import { redirectToLoginAction } from "../core/core-action-creator";
 import Loading from "../components/Loading";
@@ -30,7 +31,7 @@ class CustomerListPage extends Component {
       }
     };
 
-    this.delayedCallback = _.debounce(this.search, 1000);
+    this.delayedCallback = _.debounce(this.search, 250);
   }
 
   componentDidMount = () => {
@@ -139,6 +140,7 @@ class CustomerListPage extends Component {
 
   onSearchChange = e => {
     e.persist();
+    this.props.setLoading(true);
     this.delayedCallback(e);
   };
 
@@ -164,6 +166,7 @@ class CustomerListPage extends Component {
 
     return (
       <React.Fragment>
+        {loading && <Loading />}
         <section className="content-header">
           <h1>
             <Link to="/" className="btn btn-md btn-info">
@@ -180,7 +183,6 @@ class CustomerListPage extends Component {
           </ol>
         </section>
         <section className="content">
-          {loading && <Loading />}
           <div className="row">
             <div className="col-xs-12">
               <div className="box box-primary">
@@ -302,7 +304,8 @@ const mapDispatchToProps = dispatch => {
     load: data => dispatch(loadCurrentCustomer(data)),
     resetEditPage: () => dispatch(reset("CustomerEditPage")),
     resetCurrentCustomer: () => dispatch(resetCurrentCustomer()),
-    redirectLoginPage: () => dispatch(redirectToLoginAction())
+    redirectLoginPage: () => dispatch(redirectToLoginAction()),
+    setLoading: isLoading => dispatch(setLoadingCustomer(isLoading))
   };
 };
 

@@ -5,7 +5,8 @@ import { connect } from "react-redux";
 import {
   getCategoriesAction,
   loadCurrentCategory,
-  resetCurrentCategory
+  resetCurrentCategory,
+  setLoadingCategory
 } from "../category/category-action-creator";
 import { redirectToLoginAction } from "../core/core-action-creator";
 import auth from "../auth/auth-helper";
@@ -31,7 +32,7 @@ class CategoryListPage extends Component {
       }
     };
 
-    this.delayedCallback = _.debounce(this.search, 1000);
+    this.delayedCallback = _.debounce(this.search, 250);
   }
 
   componentDidMount = () => {
@@ -44,7 +45,7 @@ class CategoryListPage extends Component {
         params: {
           ...this.state.params,
           page: 0,
-          pageSize: 20,
+          pageSize: config.pageSize,
           keyword: e.target.value
         }
       },
@@ -116,7 +117,6 @@ class CategoryListPage extends Component {
           this.getCategories();
         },
         error => {
-          console.log("error", error);
           if (error.errorCode) {
             Alert.error(error.errorMessage);
             if (error.errorCode === "401") {
@@ -136,6 +136,7 @@ class CategoryListPage extends Component {
 
   onChangeSearch = e => {
     e.persist();
+    this.props.setLoading(true);
     this.delayedCallback(e);
   };
 
@@ -161,6 +162,7 @@ class CategoryListPage extends Component {
 
     return (
       <React.Fragment>
+        {loading && <Loading delay={0} />}
         <section className="content-header">
           <h1>
             <Link to="/" className="btn btn-md btn-info">
@@ -177,7 +179,6 @@ class CategoryListPage extends Component {
           </ol>
         </section>
         <section className="content">
-          {loading && <Loading />}
           <div className="row">
             <div className="col-md-4">
               <div className="box box-primary">
@@ -292,7 +293,8 @@ const mapDispatchToProps = dispatch => {
     load: data => dispatch(loadCurrentCategory(data)),
     resetEditPage: () => dispatch(reset("CategoryEditPage")),
     resetCurrentCategory: () => dispatch(resetCurrentCategory()),
-    redirectLoginPage: () => dispatch(redirectToLoginAction())
+    redirectLoginPage: () => dispatch(redirectToLoginAction()),
+    setLoading: isLoading => dispatch(setLoadingCategory(isLoading))
   };
 };
 
