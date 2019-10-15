@@ -44,7 +44,7 @@ class CustomerListPage extends Component {
         params: {
           ...this.state.params,
           page: 0,
-          pageSize: 20,
+          pageSize: config.pageSize,
           keyword: e.target.value
         }
       },

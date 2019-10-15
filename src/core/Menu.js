@@ -53,6 +53,12 @@ const Menu = withRouter(({ history, branch, username }) => (
                         Khách hàng
                       </Link>
                     </li>
+                    <li>
+                      <Link to="/products">
+                        <i className="glyphicon glyphicon-cutlery text-green" />{" "}
+                        Hàng hoá
+                      </Link>
+                    </li>
                   </ul>
                 </li>
               </ul>
