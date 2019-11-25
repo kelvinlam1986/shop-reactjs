@@ -7,6 +7,9 @@ import config from "../config";
 import _ from "lodash";
 import { getProductsAction, setLoadingProduct } from "./product-action-creator";
 import { redirectToLoginAction } from "../core/core-action-creator";
+import ProductEdit from "./ProductEdit";
+import { loadCurrentProduct, resetCurrentProduct } from "./product-action-creator"
+import { reset } from "redux-form";
 
 class ProductListPage extends Component {
   constructor(props) {
@@ -70,8 +73,46 @@ class ProductListPage extends Component {
     this.getProducts();
   };
 
+  showDetail = index => {
+    this.handleShow(index);
+  };
+
+  handleShow = index => {
+    const currentProduct = this.props.products[index];
+    this.setState(
+      {
+        isShowModal: true,
+        title: `Thông tin chi tiết: ${currentProduct.serial} ${currentProduct.name}`
+      },
+      () => {
+        this.props.load(this.props.products[index]);
+      }
+    );
+  };
+
+  handleClose = (e) => {
+    const { resetEditPage, resetCurrentProduct } = this.props;
+    resetEditPage();
+    resetCurrentProduct();
+    this.setState({ isShowModal: false });
+  }
+
+  updateProduct = (values) => {
+
+  }
+
   render() {
-    const { loading, redirectToLogin, products, totalPages, page } = this.props;
+    const { isShowModal, title } = this.state;
+    const {
+      loading,
+      redirectToLogin,
+      products,
+      totalPages,
+      page,
+      pristine,
+      submitting
+    } = this.props;
+
     const from = { pathname: "/signin" };
     if (redirectToLogin) {
       return <Redirect to={from} />;
@@ -170,6 +211,7 @@ class ProductListPage extends Component {
                                 <span
                                   style={{ color: "#fff", cursor: "pointer" }}
                                   className="small-box-footer"
+                                  onClick={() => this.showDetail(index)}
                                 >
                                   <i className="glyphicon glyphicon-edit text-blue" />
                                 </span>
@@ -190,6 +232,15 @@ class ProductListPage extends Component {
             </div>
           </div>
         </section>
+        <ProductEdit
+          isShowModal={isShowModal}
+          handleClose={this.handleClose}
+          container={this}
+          title={title}
+          saveProduct={this.updateProduct}
+          pristine={pristine}
+          submitting={submitting}
+        />
       </React.Fragment>
     );
   }
@@ -211,7 +262,10 @@ const mapDispatchToProps = dispatch => {
   return {
     getProducts: params => dispatch(getProductsAction(params)),
     redirectLoginPage: () => dispatch(redirectToLoginAction()),
-    setLoading: isLoading => dispatch(setLoadingProduct(isLoading))
+    setLoading: isLoading => dispatch(setLoadingProduct(isLoading)),
+    load: data => dispatch(loadCurrentProduct(data)),
+    resetEditPage: () => dispatch(reset("ProductEditPage")),
+    resetCurrentProduct: () => dispatch(resetCurrentProduct()),
   };
 };
 
