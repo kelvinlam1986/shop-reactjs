@@ -9,9 +9,17 @@ import { connect } from "react-redux";
 
 const validate = values => {
     const errors = {};
-    const requiredFields = ["serial", "name", "description", "supplierId", "categoryId"];
+    const requiredFields =
+        [
+            "serial",
+            "name",
+            "description",
+            "supplierId",
+            "categoryId",
+            "price",
+            "reorder"
+        ];
     requiredFields.forEach(field => {
-        console.log(values["supplierId"]);
         if (!values[field]) {
             if (field === "serial") {
                 errors[field] = `Bạn phải nhập Mã sản phẩm !`;
@@ -42,6 +50,25 @@ const validate = values => {
             }
         }
     });
+
+    const numberFields =
+        [
+            "price",
+            "reorder"
+        ]
+
+    numberFields.forEach(field => {
+        if (isNaN(values[field])) {
+            if (field === "price") {
+                errors[field] = "Giá sản phẩm phải là một số !";
+            }
+
+            if (field === "reorder") {
+                errors[field] = "Thự tự sắp xếp phải là một số !"
+            }
+        }
+    })
+
     return errors;
 };
 
