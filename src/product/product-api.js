@@ -46,4 +46,25 @@ const getSelectionSuppliers = (credentital, params) => {
     })
 }
 
-export { getProducts, getSelectionCategories, getSelectionSuppliers };
+const putProduct = (credential, params, id) => {
+  return fetch(Urls.PutProduct + `/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + credential.access_token
+    },
+    body: JSON.stringify({
+      serial: params.serial,
+      name: params.name,
+      description: params.description,
+      categoryId: params.categoryId,
+      supplierId: params.supplierId,
+      price: params.price,
+      reOrder: params.reorder
+    })
+  }).then(response => handleJSONResponse(response),
+    error => handleJSONResponse(error)
+  ).catch(err => { throw err; })
+}
+
+export { getProducts, getSelectionCategories, getSelectionSuppliers, putProduct };

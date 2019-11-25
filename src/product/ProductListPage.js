@@ -10,6 +10,9 @@ import { redirectToLoginAction } from "../core/core-action-creator";
 import ProductEdit from "./ProductEdit";
 import { loadCurrentProduct, resetCurrentProduct } from "./product-action-creator"
 import { reset } from "redux-form";
+import auth from "../auth/auth-helper";
+import { putProduct } from "./product-api";
+import Alert from "react-s-alert";
 
 class ProductListPage extends Component {
   constructor(props) {
@@ -98,7 +101,44 @@ class ProductListPage extends Component {
   }
 
   updateProduct = (values) => {
+    const {
+      resetEditPage,
+      resetCurrentProduct,
+      redirectLoginPage
+    } = this.props;
 
+    this.setState({ isShowModal: false });
+    const jwt = auth.isAuthenticated();
+    putProduct(
+      jwt,
+      {
+        name: values.name,
+        serial: values.serial,
+        description: values.description,
+        categoryId: parseInt(values.categoryId, 10),
+        supplierId: parseInt(values.supplierId, 10),
+        price: parseFloat(values.price),
+        reorder: parseFloat(values.reorder)
+      }, values.id).then(result => {
+        resetEditPage();
+        resetCurrentProduct();
+        Alert.success("Lưu sản phẩm thành công");
+        this.getProducts();
+      }, error => {
+        if (error.errorCode) {
+          Alert.error(error.errorMessage);
+          if (error.errorCode === "401") {
+            redirectLoginPage();
+          }
+        } else {
+          redirectLoginPage();
+          Alert.error("Không thể kết nối đến server.");
+        }
+      }
+      ).catch(err => {
+        redirectLoginPage();
+        Alert.error("Không thể kết nối đến server.");
+      });
   }
 
   render() {

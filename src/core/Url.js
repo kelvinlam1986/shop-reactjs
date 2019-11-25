@@ -10,7 +10,8 @@ const Urls = {
   GetCustomers: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer?branchId=${config.defaultBranch}`,
   PutCustomer: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer`,
   GetProducts: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/product?branchId=${config.defaultBranch}`,
-  GetSupplierSelection: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier/all?branchId=${config.defaultBranch}`
+  GetSupplierSelection: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier/all?branchId=${config.defaultBranch}`,
+  PutProduct: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/product`,
 };
 
 export default Urls;
