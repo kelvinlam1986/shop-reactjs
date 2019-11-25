@@ -4,6 +4,7 @@ import Home from "./core/Home";
 import CategoryListPage from "./category/CategoryListPage";
 import CustomerListPage from "./customer/CustomerListPage";
 import ProductListPage from "./product/ProductListPage";
+import SupplierListPage from "./supplier/SupplierListPage";
 import PrivateRoute from "./core/PrivateRoute";
 import { SignInForm } from "./auth/SignIn";
 
@@ -14,6 +15,7 @@ export default class MainRouter extends Component {
         <PrivateRoute exact path="/categories" component={CategoryListPage} />
         <PrivateRoute exact path="/customers" component={CustomerListPage} />
         <PrivateRoute exact path="/products" component={ProductListPage} />
+        <PrivateRoute exact path="/suppliers" component={SupplierListPage} />
         <PrivateRoute exact path="/" component={Home} />
         <Route path="/signin" component={props => <SignInForm {...props} />} />
       </React.Fragment>

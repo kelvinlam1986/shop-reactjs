@@ -59,6 +59,12 @@ const Menu = withRouter(({ history, branch, username }) => (
                         Hàng hoá
                       </Link>
                     </li>
+                    <li>
+                      <Link to="/suppliers">
+                        <i className="glyphicon glyphicon-send text-green" />{" "}
+                        Nhà cung cấp
+                      </Link>
+                    </li>
                   </ul>
                 </li>
               </ul>
