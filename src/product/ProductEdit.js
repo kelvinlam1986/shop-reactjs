@@ -5,7 +5,9 @@ import { reduxForm, Field } from "redux-form";
 import renderInput from "../components/AdvanceTextField";
 import renderTextArea from "../components/AdvanceTextArea";
 import renderSelection from "../components/SelectInput"
+import renderNumber from "../components/NumberField"
 import { connect } from "react-redux";
+import _ from "lodash"
 
 const validate = values => {
     const errors = {};
@@ -88,20 +90,26 @@ class ProductEdit extends Component {
             categories
         } = this.props;
 
-        const suppliersModel = suppliers.map(item => {
-            return {
-                value: item.id,
-                name: item.name
-            }
-        })
+        let suppliersModel = [];
+        let categoriesModel = [];
 
-        const categoriesModel = categories.map(item => {
-            return {
-                value: item.id,
-                name: item.name
-            }
-        })
+        if (_.isEmpty(suppliers) === false) {
+            suppliersModel = suppliers.map(item => {
+                return {
+                    value: item.id,
+                    name: item.name
+                }
+            })
+        }
 
+        if (_.isEmpty(categories) === false) {
+            categoriesModel = categories.map(item => {
+                return {
+                    value: item.id,
+                    name: item.name
+                }
+            })
+        }
         return (
             <RegisterModal
                 isShowModal={isShowModal}
@@ -145,12 +153,12 @@ class ProductEdit extends Component {
                         options={categoriesModel} />
                     <Field
                         name="price"
-                        component={renderInput}
+                        component={renderNumber}
                         label="Giá"
                     />
                     <Field
                         name="reorder"
-                        component={renderInput}
+                        component={renderNumber}
                         label="Sắp xếp"
                     />
                 </Form>

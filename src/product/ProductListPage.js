@@ -13,6 +13,7 @@ import { reset } from "redux-form";
 import auth from "../auth/auth-helper";
 import { putProduct } from "./product-api";
 import Alert from "react-s-alert";
+import * as numeral from "numeral"
 
 class ProductListPage extends Component {
   constructor(props) {
@@ -244,7 +245,7 @@ class ProductListPage extends Component {
                               <td>{product.description}</td>
                               <td>{product.supplierName}</td>
                               <td>{product.quantity}</td>
-                              <td>{product.price}</td>
+                              <td>{numeral(product.price).format("0,0")}</td>
                               <td>{product.categoryName}</td>
                               <td>{product.reorder}</td>
                               <td>
