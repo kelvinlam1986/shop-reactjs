@@ -8,13 +8,15 @@ import {
     getSuppliersAction,
     setLoadingSupplier,
     loadCurrentSupplier,
-    resetCurrentSupplier
+    resetCurrentSupplier,
+    resetNewSupplier
 } from "./supplier-action-creator";
 import Pagination from "../components/Pagination";
 import Loading from "../components/Loading";
 import SupplierEdit from "./SupplierEdit";
+import SupplierAdd from "./SupplierAdd";
 import auth from "../auth/auth-helper";
-import { putSupplier } from "./supplier-api";
+import { putSupplier, postSupplier } from "./supplier-api";
 import Alert from "react-s-alert";
 
 class SupplierListPage extends Component {
@@ -27,7 +29,9 @@ class SupplierListPage extends Component {
                 page: 0,
                 pageSize: config.pageSize,
                 keyword: ""
-            }
+            },
+            isShowModalAdd: false,
+            titleAdd: "Thêm mới nhà cung cấp"
         };
 
         this.delayedCallback = _.debounce(this.search, 250);
@@ -96,6 +100,12 @@ class SupplierListPage extends Component {
         );
     };
 
+    handleShowAdd = () => {
+        this.setState({
+            isShowModalAdd: true,
+        });
+    }
+
     updateSupplier = values => {
         const {
             resetEditPage,
@@ -139,6 +149,49 @@ class SupplierListPage extends Component {
             });
     }
 
+    addSupplier = values => {
+        const {
+            resetAddPage,
+            resetNewSupplier,
+            redirectLoginPage
+        } = this.props;
+
+        this.setState({ isShowModalAdd: false });
+        const jwt = auth.isAuthenticated();
+        postSupplier(
+            jwt,
+            {
+                name: values.name,
+                address: values.address,
+                contact: values.contact,
+                branchId: config.defaultBranch
+            }
+        )
+            .then(
+                result => {
+                    resetAddPage();
+                    resetNewSupplier();
+                    Alert.success("Lưu nhà cung cấp thành công");
+                    this.getSuppliers();
+                },
+                error => {
+                    if (error.errorCode) {
+                        Alert.error(error.errorMessage);
+                        if (error.errorCode === "401") {
+                            redirectLoginPage();
+                        }
+                    } else {
+                        redirectLoginPage();
+                        Alert.error("Không thể kết nối đến server.");
+                    }
+                }
+            )
+            .catch(err => {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            });
+    }
+
     handleClose = e => {
         const { resetEditPage, resetCurrentSupplier } = this.props;
         resetEditPage();
@@ -146,9 +199,15 @@ class SupplierListPage extends Component {
         this.setState({ isShowModal: false });
     };
 
+    handleCloseAdd = e => {
+        const { resetAddPage, resetNewSupplier } = this.props;
+        resetAddPage();
+        resetNewSupplier();
+        this.setState({ isShowModalAdd: false });
+    };
 
     render() {
-        const { isShowModal, title } = this.state;
+        const { isShowModal, title, isShowModalAdd, titleAdd } = this.state;
         const {
             pristine,
             submitting,
@@ -173,7 +232,9 @@ class SupplierListPage extends Component {
                             Quay về
                         </Link>
                         {" "}
-                        <button type="button" className="btn btn-md btn-primary">Thêm mới</button>
+                        <button type="button"
+                            className="btn btn-md btn-primary"
+                            onClick={this.handleShowAdd}>Thêm mới</button>
                     </h1>
                     <ol className="breadcrumb">
                         <li>
@@ -276,6 +337,15 @@ class SupplierListPage extends Component {
                     pristine={pristine}
                     submitting={submitting}
                 />
+                <SupplierAdd
+                    isShowModal={isShowModalAdd}
+                    handleClose={this.handleCloseAdd}
+                    title={titleAdd}
+                    addSupplier={this.addSupplier}
+                    pristine={pristine}
+                    submitting={submitting}
+                />
+
             </React.Fragment>
         )
     }
@@ -299,7 +369,9 @@ const mapDispatchToProps = dispatch => {
         setLoading: isLoading => dispatch(setLoadingSupplier(isLoading)),
         load: data => dispatch(loadCurrentSupplier(data)),
         resetEditPage: () => dispatch(reset("SupplierEditPage")),
+        resetAddPage: () => dispatch(reset("SupplierAddPage")),
         resetCurrentSupplier: () => dispatch(resetCurrentSupplier()),
+        resetNewSupplier: () => dispatch(resetNewSupplier())
     };
 };
 

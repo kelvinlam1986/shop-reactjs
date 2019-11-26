@@ -38,4 +38,27 @@ const putSupplier = (credentital, params, id) => {
         });
 };
 
-export { getSuppliers, putSupplier };
+const postSupplier = (credential, params) => {
+    return fetch(Urls.PostSupplier, {
+        method: "Post",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + credential.access_token
+        },
+        body: JSON.stringify({
+            name: params.name,
+            address: params.address,
+            contact: params.contact,
+            branchId: params.branchId
+        })
+    })
+        .then(
+            response => handleJSONResponse(response),
+            error => handleJSONResponse(error)
+        )
+        .catch(err => {
+            throw err;
+        });
+}
+
+export { getSuppliers, putSupplier, postSupplier };

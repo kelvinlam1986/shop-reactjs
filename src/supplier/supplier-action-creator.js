@@ -4,6 +4,7 @@ const GET_SUPPLIERS_FAILED = "GET_SUPPLIERS_FAILED";
 const SET_LOADING_SUPPLIER = "SET_LOADING_SUPPLIER";
 const LOAD_CURRENT_SUPPLIER = "LOAD_CURRENT_SUPPLIER";
 const RESET_CURRENT_SUPPLIER = "RESET_CURRENT_SUPPLIER";
+const RESET_NEW_SUPPLIER = "RESET_NEW_SUPPLIER";
 
 const setLoadingSupplier = isLoading => {
     return {
@@ -42,6 +43,10 @@ const resetCurrentSupplier = () => {
     return { type: RESET_CURRENT_SUPPLIER };
 };
 
+const resetNewSupplier = () => {
+    return { type: RESET_NEW_SUPPLIER };
+}
+
 export {
     GET_SUPPLIERS,
     GET_SUPPLIERS_SUCCESS,
@@ -49,10 +54,12 @@ export {
     SET_LOADING_SUPPLIER,
     LOAD_CURRENT_SUPPLIER,
     RESET_CURRENT_SUPPLIER,
+    RESET_NEW_SUPPLIER,
     getSuppliersAction,
     getSuppliersActionSuccess,
     getSuppliersActionFailed,
     setLoadingSupplier,
     loadCurrentSupplier,
-    resetCurrentSupplier
+    resetCurrentSupplier,
+    resetNewSupplier
 }

@@ -4,7 +4,8 @@ import {
     GET_SUPPLIERS_FAILED,
     SET_LOADING_SUPPLIER,
     LOAD_CURRENT_SUPPLIER,
-    RESET_CURRENT_SUPPLIER
+    RESET_CURRENT_SUPPLIER,
+    RESET_NEW_SUPPLIER
 } from "./supplier-action-creator"
 
 const supplierInitialState = {
@@ -21,7 +22,9 @@ const supplierInitialState = {
     },
     addNewSupplier: {
         id: 0,
-        name: ""
+        name: "",
+        address: "",
+        contact: ""
     }
 };
 
@@ -56,6 +59,15 @@ const supplierReducer = (state = supplierInitialState, action) => {
         case RESET_CURRENT_SUPPLIER:
             return Object.assign({}, state, {
                 currentSupplier: {
+                    id: 0,
+                    name: "",
+                    address: "",
+                    contact: ""
+                }
+            });
+        case RESET_NEW_SUPPLIER:
+            return Object.assign({}, state, {
+                addNewSupplier: {
                     id: 0,
                     name: "",
                     address: "",
