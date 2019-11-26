@@ -13,6 +13,9 @@ import {
 import Pagination from "../components/Pagination";
 import Loading from "../components/Loading";
 import SupplierEdit from "./SupplierEdit";
+import auth from "../auth/auth-helper";
+import { putSupplier } from "./supplier-api";
+import Alert from "react-s-alert";
 
 class SupplierListPage extends Component {
     constructor(props) {
@@ -94,6 +97,46 @@ class SupplierListPage extends Component {
     };
 
     updateSupplier = values => {
+        const {
+            resetEditPage,
+            resetCurrentSupplier,
+            redirectLoginPage
+        } = this.props;
+
+        this.setState({ isShowModal: false });
+        const jwt = auth.isAuthenticated();
+        putSupplier(
+            jwt,
+            {
+                name: values.name,
+                address: values.address,
+                contact: values.contact
+            },
+            values.id
+        )
+            .then(
+                result => {
+                    resetEditPage();
+                    resetCurrentSupplier();
+                    Alert.success("Lưu nhà cung cấp thành công");
+                    this.getSuppliers();
+                },
+                error => {
+                    if (error.errorCode) {
+                        Alert.error(error.errorMessage);
+                        if (error.errorCode === "401") {
+                            redirectLoginPage();
+                        }
+                    } else {
+                        redirectLoginPage();
+                        Alert.error("Không thể kết nối đến server.");
+                    }
+                }
+            )
+            .catch(err => {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            });
     }
 
     handleClose = e => {
