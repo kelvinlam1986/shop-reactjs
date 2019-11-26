@@ -1,8 +1,11 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import config from "../config";
-import { getSuppliersAction } from "./supplier-action-creator"
+import { getSuppliersAction, setLoadingSupplier } from "./supplier-action-creator";
+import Pagination from "../components/Pagination";
+import Loading from "../components/Loading";
+
 import _ from "lodash";
 
 class SupplierListPage extends Component {
@@ -45,10 +48,45 @@ class SupplierListPage extends Component {
         this.props.getSuppliers(this.state.params);
     };
 
+    handlePageClick = e => {
+        this.setState(
+            {
+                params: {
+                    ...this.state.params,
+                    page: e.selected
+                }
+            },
+            () => this.getSuppliers()
+        );
+    };
+
+    onSearchChange = e => {
+        e.persist();
+        this.props.setLoading(true);
+        this.delayedCallback(e);
+    };
+
+    onSearchClick = e => {
+        this.getSuppliers();
+    };
+
     render() {
-        const { suppliers } = this.props;
+        const {
+            suppliers,
+            redirectToLogin,
+            totalPages,
+            page,
+            loading
+        } = this.props;
+
+        const from = { pathname: "/signin" };
+        if (redirectToLogin) {
+            return <Redirect to={from} />;
+        }
+
         return (
             <React.Fragment>
+                {loading && <Loading />}
                 <section className="content-header">
                     <h1>
                         <Link to="/" className="btn btn-md btn-info">
@@ -82,12 +120,14 @@ class SupplierListPage extends Component {
                                                 name="table_search"
                                                 className="form-control pull-right"
                                                 placeholder="Tìm kiếm"
+                                                onChange={this.onSearchChange}
                                             />
 
                                             <div className="input-group-btn">
                                                 <button
                                                     type="submit"
                                                     className="btn btn-default"
+                                                    onClick={this.onSearchClick}
                                                 >
                                                     <i className="fa fa-search"></i>
                                                 </button>
@@ -135,6 +175,12 @@ class SupplierListPage extends Component {
                                             }
                                         </tbody>
                                     </table>
+                                    <Pagination
+                                        totalPages={totalPages}
+                                        page={page}
+                                        pageRangeDisplayed={2}
+                                        onPageChange={this.handlePageClick}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -160,6 +206,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         getSuppliers: params => dispatch(getSuppliersAction(params)),
+        setLoading: isLoading => dispatch(setLoadingSupplier(isLoading))
     };
 };
 

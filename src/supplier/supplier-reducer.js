@@ -1,6 +1,8 @@
 import {
     GET_SUPPLIERS,
-    GET_SUPPLIERS_SUCCESS, GET_SUPPLIERS_FAILED
+    GET_SUPPLIERS_SUCCESS,
+    GET_SUPPLIERS_FAILED,
+    SET_LOADING_SUPPLIER
 } from "./supplier-action-creator"
 
 const supplierInitialState = {
@@ -23,6 +25,10 @@ const supplierInitialState = {
 
 const supplierReducer = (state = supplierInitialState, action) => {
     switch (action.type) {
+        case SET_LOADING_SUPPLIER:
+            return Object.assign({}, state, {
+                loading: action.isLoading
+            });
         case GET_SUPPLIERS:
             return Object.assign({}, state, {
                 loading: true
