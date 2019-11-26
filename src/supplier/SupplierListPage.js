@@ -1,8 +1,52 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import config from "../config";
+import { getSuppliersAction } from "./supplier-action-creator"
+import _ from "lodash";
 
 class SupplierListPage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isShowModal: false,
+            title: "Thông tin chi tiết",
+            params: {
+                page: 0,
+                pageSize: config.pageSize,
+                keyword: ""
+            }
+        };
+
+        this.delayedCallback = _.debounce(this.search, 250);
+    }
+
+    componentDidMount = () => {
+        this.getSuppliers();
+    };
+
+    search = e => {
+        this.setState(
+            {
+                params: {
+                    ...this.state.params,
+                    page: 0,
+                    pageSize: config.pageSize,
+                    keyword: e.target.value
+                }
+            },
+            () => {
+                this.getSuppliers();
+            }
+        );
+    };
+
+    getSuppliers = () => {
+        this.props.getSuppliers(this.state.params);
+    };
+
     render() {
+        const { suppliers } = this.props;
         return (
             <React.Fragment>
                 <section className="content-header">
@@ -64,21 +108,32 @@ class SupplierListPage extends Component {
                                                 <th>Liên hệ #</th>
                                                 <th>Hoạt động</th>
                                             </tr>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Minh Hằng</td>
-                                                <td>243 Trần Hưng Đạo Q1 TP.HCM</td>
-                                                <td>098675678</td>
-                                                <td>
-                                                    <span
-                                                        style={{ color: "#fff", cursor: "pointer" }}
-                                                        className="small-box-footer"
-                                                    >
-                                                        <i className="glyphicon glyphicon-edit text-blue" />
-                                                    </span>
-                                                </td>
-                                            </tr>
                                         </thead>
+                                        <tbody>
+                                            {
+                                                suppliers &&
+                                                suppliers.length > 0 &&
+                                                suppliers.map((supplier, index) => {
+                                                    return (
+                                                        <tr>
+                                                            <td>{index + 1}</td>
+                                                            <td>{supplier.name}</td>
+                                                            <td>{supplier.address}</td>
+                                                            <td>{supplier.contact}</td>
+                                                            <td>
+                                                                <span
+                                                                    style={{ color: "#fff", cursor: "pointer" }}
+                                                                    className="small-box-footer"
+                                                                >
+                                                                    <i className="glyphicon glyphicon-edit text-blue" />
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -90,4 +145,22 @@ class SupplierListPage extends Component {
     }
 }
 
-export default SupplierListPage;
+const mapStateToProps = state => {
+    const { loading, suppliers, totalPages, page } = state.supplier;
+    const { redirectToLogin } = state.core;
+    return {
+        loading,
+        suppliers,
+        redirectToLogin,
+        totalPages,
+        page
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        getSuppliers: params => dispatch(getSuppliersAction(params)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SupplierListPage);
