@@ -1,12 +1,18 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { reset } from "redux-form";
+import _ from "lodash";
 import config from "../config";
-import { getSuppliersAction, setLoadingSupplier } from "./supplier-action-creator";
+import {
+    getSuppliersAction,
+    setLoadingSupplier,
+    loadCurrentSupplier,
+    resetCurrentSupplier
+} from "./supplier-action-creator";
 import Pagination from "../components/Pagination";
 import Loading from "../components/Loading";
-
-import _ from "lodash";
+import SupplierEdit from "./SupplierEdit";
 
 class SupplierListPage extends Component {
     constructor(props) {
@@ -70,8 +76,39 @@ class SupplierListPage extends Component {
         this.getSuppliers();
     };
 
+    showDetail = index => {
+        this.handleShow(index);
+    };
+
+    handleShow = index => {
+        const currentSupplier = this.props.suppliers[index];
+        this.setState(
+            {
+                isShowModal: true,
+                title: `Thông tin chi tiết: ${currentSupplier.name}`
+            },
+            () => {
+                this.props.load(this.props.suppliers[index]);
+            }
+        );
+    };
+
+    updateSupplier = values => {
+    }
+
+    handleClose = e => {
+        const { resetEditPage, resetCurrentSupplier } = this.props;
+        resetEditPage();
+        resetCurrentSupplier();
+        this.setState({ isShowModal: false });
+    };
+
+
     render() {
+        const { isShowModal, title } = this.state;
         const {
+            pristine,
+            submitting,
             suppliers,
             redirectToLogin,
             totalPages,
@@ -164,6 +201,7 @@ class SupplierListPage extends Component {
                                                                 <span
                                                                     style={{ color: "#fff", cursor: "pointer" }}
                                                                     className="small-box-footer"
+                                                                    onClick={() => this.showDetail(index)}
                                                                 >
                                                                     <i className="glyphicon glyphicon-edit text-blue" />
                                                                 </span>
@@ -186,6 +224,15 @@ class SupplierListPage extends Component {
                         </div>
                     </div>
                 </section>
+                <SupplierEdit
+                    isShowModal={isShowModal}
+                    handleClose={this.handleClose}
+                    container={this}
+                    title={title}
+                    saveSupplier={this.updateSupplier}
+                    pristine={pristine}
+                    submitting={submitting}
+                />
             </React.Fragment>
         )
     }
@@ -206,7 +253,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         getSuppliers: params => dispatch(getSuppliersAction(params)),
-        setLoading: isLoading => dispatch(setLoadingSupplier(isLoading))
+        setLoading: isLoading => dispatch(setLoadingSupplier(isLoading)),
+        load: data => dispatch(loadCurrentSupplier(data)),
+        resetEditPage: () => dispatch(reset("SupplierEditPage")),
+        resetCurrentSupplier: () => dispatch(resetCurrentSupplier()),
     };
 };
 
