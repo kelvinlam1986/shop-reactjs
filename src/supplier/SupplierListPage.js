@@ -296,7 +296,7 @@ class SupplierListPage extends Component {
                                                 suppliers.length > 0 &&
                                                 suppliers.map((supplier, index) => {
                                                     return (
-                                                        <tr>
+                                                        <tr key={index}>
                                                             <td>{index + 1}</td>
                                                             <td>{supplier.name}</td>
                                                             <td>{supplier.address}</td>
