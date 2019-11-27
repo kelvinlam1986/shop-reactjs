@@ -12,7 +12,7 @@ const Urls = {
   GetProducts: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/product?branchId=${config.defaultBranch}`,
   GetSupplierSelection: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier/all?branchId=${config.defaultBranch}`,
   PutProduct: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/product`,
-  GetSuppliers: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier?branchId=${config.defaultBranch}`,
+  GetSuppliers: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier`,
   PutSupplier: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier`,
   PostSupplier: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier`
 };
