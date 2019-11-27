@@ -7,7 +7,7 @@ const Urls = {
   SignOut: `${protocol}://${config.hostName}:${config.apiPort}/api/account/signout`,
   GetDefaultBranch: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/branch/${config.defaultBranch}`,
   GetCategories: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/category`,
-  GetCustomers: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer?branchId=${config.defaultBranch}`,
+  GetCustomers: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer`,
   PutCustomer: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer`,
   GetProducts: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/product?branchId=${config.defaultBranch}`,
   GetSupplierSelection: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier/all?branchId=${config.defaultBranch}`,
