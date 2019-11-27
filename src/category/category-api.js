@@ -3,15 +3,19 @@ import handleJSONResponse from "../core/handleResponse";
 
 const getCategories = (credentital, params) => {
   const url =
-    Urls.GetCategories +
-    `?keyword=${params.keyword}&page=${params.page}&pageSize=${params.pageSize}`;
+    Urls.GetCategories + "/search"
 
   return fetch(url, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + credentital.access_token
-    }
+    },
+    body: JSON.stringify({
+      keyword: params.keyword,
+      page: params.page,
+      pageSize: params.pageSize
+    })
   })
     .then(res => handleJSONResponse(res))
     .catch(err => {
