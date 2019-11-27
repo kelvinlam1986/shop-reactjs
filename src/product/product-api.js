@@ -1,16 +1,21 @@
 import Urls from "../core/Url";
 import handleJSONResponse from "../core/handleResponse";
+import config from "../config";
 
 const getProducts = (credentital, params) => {
-  const url =
-    Urls.GetProducts +
-    `&keyword=${params.keyword}&page=${params.page}&pageSize=${params.pageSize}`;
+  const url = Urls.GetProducts + "/search";
   return fetch(url, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + credentital.access_token
-    }
+    },
+    body: JSON.stringify({
+      branchId: config.defaultBranch,
+      keyword: params.keyword,
+      page: params.page,
+      pageSize: params.pageSize
+    })
   })
     .then(res => handleJSONResponse(res))
     .catch(err => {
