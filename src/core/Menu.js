@@ -3,14 +3,14 @@ import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
 import auth from "../auth/auth-helper";
 
-const Menu = withRouter(({ history, branch, username }) => (
+const Menu = withRouter(({ history, username }) => (
   <header className="main-header">
     <nav className="navbar navbar-static-top" role="navigation">
       <div className="container">
         <div className="navbar-header" style={{ paddingLeft: 20 }}>
           <Link to="/home" className="navbar-brand">
             <b>
-              <i className="glyphicon glyphicon-home" /> {branch && branch.name}
+              <i className="glyphicon glyphicon-home" /> Minh Shop
             </b>
             <button
               type="button"
@@ -41,10 +41,16 @@ const Menu = withRouter(({ history, branch, username }) => (
               <ul className="dropdown-menu">
                 <li>
                   <ul className="menu">
-                    <li>
+                    {/* <li>
                       <Link to="/categories">
                         <i className="glyphicon glyphicon-user text-green" />
                         Danh mục
+                      </Link>
+                    </li> */}
+                    <li>
+                      <Link to="/banks">
+                        <i className="glyphicon glyphicon-piggy-bank text-green" />
+                        Ngân hàng
                       </Link>
                     </li>
                     <li>
@@ -63,6 +69,28 @@ const Menu = withRouter(({ history, branch, username }) => (
                       <Link to="/suppliers">
                         <i className="glyphicon glyphicon-send text-green" />{" "}
                         Nhà cung cấp
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li className="dropdown notifications-menu">
+              <Link
+                to="/notification"
+                className="dropdown-toggle"
+                data-toggle="dropdown"
+              >
+                <i className="glyphicon glyphicon-wrench" /> &nbsp; Nghiệp vụ
+
+              </Link>
+              <ul className="dropdown-menu">
+                <li>
+                  <ul className="menu">
+                    <li>
+                      <Link to="/purchase">
+                        <i className="glyphicon glyphicon-book text-green" />
+                        Danh sách phiếu mua hàng
                       </Link>
                     </li>
                   </ul>

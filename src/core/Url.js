@@ -14,7 +14,9 @@ const Urls = {
   PutProduct: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/product`,
   GetSuppliers: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier`,
   PutSupplier: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier`,
-  PostSupplier: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier`
+  PostSupplier: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier`,
+  GetPurchaseInvoicesSelection: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/purchaseInvoice/all?branchId=${config.defaultBranch}`,
+  GetBanks: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/bank`,
 };
 
 export default Urls;

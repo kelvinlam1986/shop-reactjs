@@ -6,10 +6,10 @@ import LoadingIndicator from "../components/Loading";
 
 class Home extends Component {
   componentDidMount() {
-    this.props.getBranch();
+    // this.props.getBranch();
   }
   render() {
-    const { branch, redirectToLogin, loading } = this.props;
+    const { redirectToLogin, loading } = this.props;
     const from = { pathname: "/signin" };
     if (redirectToLogin) {
       return <Redirect to={from} />;
@@ -133,14 +133,14 @@ class Home extends Component {
                   <i className="glyphicon glyphicon-map-marker margin-r-5" />{" "}
                   Địa chỉ công ty
                 </strong>
-                <p className="text-muted">{branch && branch.address}</p>
+                <p className="text-muted">240/2 Lê Thánh Tôn P. Bến Thành Q1. TPHCM</p>
                 <hr />
 
                 <strong>
                   <i className="glyphicon glyphicon-phone-alt margin-r-5" /> Số
                   điện thoại
                 </strong>
-                <p className="text-muted">{branch && branch.contact}</p>
+                <p className="text-muted">0902 305 226</p>
                 <hr />
               </div>
             </div>
