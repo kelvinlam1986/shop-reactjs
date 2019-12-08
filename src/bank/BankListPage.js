@@ -5,6 +5,7 @@ import { getBanksAction, setLoadingBank } from "./bank-action-creator"
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 import config from "../config";
+import _ from "lodash";
 
 class BankListPage extends Component {
 
@@ -17,6 +18,8 @@ class BankListPage extends Component {
                 keyword: ""
             }
         }
+
+        this.delayedCallback = _.debounce(this.search, 250);
     }
 
     componentDidMount = () => {
@@ -26,6 +29,46 @@ class BankListPage extends Component {
     getBanks = () => {
         this.props.getBanks(this.state.params);
     };
+
+    search = e => {
+        this.setState(
+            {
+                params: {
+                    ...this.state.params,
+                    page: 0,
+                    pageSize: config.pageSize,
+                    keyword: e.target.value
+                }
+            },
+            () => {
+                this.getBanks();
+            }
+        );
+    };
+
+    onChangeSearch = e => {
+        e.persist();
+        this.props.setLoading(true);
+        this.delayedCallback(e);
+    };
+
+    onClickSearch = e => {
+        this.getBanks();
+    };
+
+    handlePageClick = e => {
+        this.setState(
+            {
+                params: {
+                    ...this.state.params,
+                    page: e.selected
+                }
+            },
+            () => this.getBanks()
+        );
+    };
+
+
 
     render() {
         const {
@@ -75,11 +118,13 @@ class BankListPage extends Component {
                                                 name="table_search"
                                                 className="form-control pull-right"
                                                 placeholder="Tìm kiếm"
+                                                onChange={this.onChangeSearch}
                                             />
                                             <div className="input-group-btn">
                                                 <button
                                                     type="submit"
                                                     className="btn btn-default"
+                                                    onClick={this.onClickSearch}
                                                 >
                                                     <i className="fa fa-search"></i>
                                                 </button>
@@ -128,6 +173,7 @@ class BankListPage extends Component {
                                         totalPages={totalPages}
                                         page={page}
                                         pageRangeDisplayed={2}
+                                        onPageChange={this.handlePageClick}
                                     />
                                 </div>
                             </div>

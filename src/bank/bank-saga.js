@@ -30,7 +30,6 @@ function* getBanksSaga(action) {
             yield put(redirectToLoginAction());
         } else {
             const result = yield call(() => getBanks(jwt, action.params));
-            console.log("result", result);
             if (result.error === null) {
                 yield put(getBanksActionSuccess(result.payload));
             } else {
