@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { getBanksAction, setLoadingBank } from "./bank-action-creator"
+import { reset } from "redux-form";
+import { getBanksAction, setLoadingBank, resetNewBank } from "./bank-action-creator"
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 import config from "../config";
 import _ from "lodash";
+import BankAdd from "./BankAdd";
 
 class BankListPage extends Component {
 
@@ -16,7 +18,9 @@ class BankListPage extends Component {
                 page: 0,
                 pageSize: config.pageSize,
                 keyword: ""
-            }
+            },
+            isShowModalAdd: false,
+            titleAdd: "Thêm mới nhà cung cấp"
         }
 
         this.delayedCallback = _.debounce(this.search, 250);
@@ -68,15 +72,32 @@ class BankListPage extends Component {
         );
     };
 
+    handleShowAdd = () => {
+        this.setState({
+            isShowModalAdd: true,
+        });
+    }
 
+    addBank = values => {
+    }
+
+    handleCloseAdd = e => {
+        const { resetAddPage, resetNewBank } = this.props;
+        resetAddPage();
+        resetNewBank();
+        this.setState({ isShowModalAdd: false });
+    };
 
     render() {
+        const { isShowModalAdd, titleAdd } = this.state;
         const {
             banks,
             loading,
             redirectToLogin,
             totalPages,
-            page
+            page,
+            pristine,
+            submitting,
         } = this.props;
 
         const from = { pathname: "/signin" };
@@ -92,6 +113,10 @@ class BankListPage extends Component {
                         <Link to="/" className="btn btn-md btn-info">
                             Quay về
                         </Link>
+                        {" "}
+                        <button type="button"
+                            className="btn btn-md btn-primary"
+                            onClick={this.handleShowAdd}>Thêm mới</button>
                     </h1>
                     <ol className="breadcrumb">
                         <li>
@@ -181,6 +206,14 @@ class BankListPage extends Component {
                         </div>
                     </div>
                 </section>
+                <BankAdd
+                    isShowModal={isShowModalAdd}
+                    handleClose={this.handleCloseAdd}
+                    title={titleAdd}
+                    addBank={this.addBank}
+                    pristine={pristine}
+                    submitting={submitting}
+                />
             </React.Fragment>
         )
     }
@@ -201,7 +234,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         getBanks: params => dispatch(getBanksAction(params)),
-        setLoading: isLoading => dispatch(setLoadingBank(isLoading))
+        setLoading: isLoading => dispatch(setLoadingBank(isLoading)),
+        resetAddPage: () => dispatch(reset("BankAddPage")),
+        resetNewBank: () => dispatch(resetNewBank())
     }
 }
 

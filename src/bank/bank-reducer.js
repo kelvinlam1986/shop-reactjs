@@ -8,12 +8,14 @@ const bankInitialState = {
     totalPages: 0,
     page: 1,
     currentBank: {
-        id: 0,
-        name: ""
+        code: "",
+        name: "",
+        address: ""
     },
     addNewBank: {
-        id: 0,
-        name: ""
+        code: "",
+        name: "",
+        address: ""
     }
 };
 
