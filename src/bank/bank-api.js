@@ -20,4 +20,26 @@ const getBanks = (credential, params) => {
         })
 }
 
-export { getBanks };
+const postBank = (credential, params) => {
+    return fetch(Urls.PostBank, {
+        method: "Post",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + credential.access_token
+        },
+        body: JSON.stringify({
+            code: params.code,
+            name: params.name,
+            address: params.address,
+        })
+    })
+        .then(
+            response => handleJSONResponse(response),
+            error => handleJSONResponse(error)
+        )
+        .catch(err => {
+            throw err;
+        });
+}
+
+export { getBanks, postBank };

@@ -17,6 +17,7 @@ const Urls = {
   PostSupplier: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/supplier`,
   GetPurchaseInvoicesSelection: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/purchaseInvoice/all?branchId=${config.defaultBranch}`,
   GetBanks: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/bank`,
+  PostBank: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/bank`,
 };
 
 export default Urls;

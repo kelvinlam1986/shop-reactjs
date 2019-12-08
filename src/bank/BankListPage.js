@@ -8,6 +8,9 @@ import Pagination from "../components/Pagination";
 import config from "../config";
 import _ from "lodash";
 import BankAdd from "./BankAdd";
+import auth from "../auth/auth-helper"
+import { postBank } from "./bank-api";
+import Alert from "react-s-alert";
 
 class BankListPage extends Component {
 
@@ -79,6 +82,45 @@ class BankListPage extends Component {
     }
 
     addBank = values => {
+        const {
+            resetAddPage,
+            resetNewBank,
+            redirectLoginPage
+        } = this.props;
+
+        this.setState({ isShowModalAdd: false });
+        const jwt = auth.isAuthenticated();
+        postBank(
+            jwt,
+            {
+                code: values.code,
+                name: values.name,
+                address: values.address,
+            }
+        )
+            .then(
+                result => {
+                    resetAddPage();
+                    resetNewBank();
+                    Alert.success("Lưu ngân hàng thành công");
+                    this.getBanks();
+                },
+                error => {
+                    if (error.errorCode) {
+                        Alert.error(error.errorMessage);
+                        if (error.errorCode === "401") {
+                            redirectLoginPage();
+                        }
+                    } else {
+                        redirectLoginPage();
+                        Alert.error("Không thể kết nối đến server.");
+                    }
+                }
+            )
+            .catch(err => {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            });
     }
 
     handleCloseAdd = e => {
