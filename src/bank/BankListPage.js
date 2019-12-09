@@ -9,6 +9,7 @@ import {
     loadCurrentBank,
     resetCurrentBank
 } from "./bank-action-creator"
+import { redirectToLoginAction } from "../core/core-action-creator";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 import config from "../config";
@@ -16,8 +17,9 @@ import _ from "lodash";
 import BankAdd from "./BankAdd";
 import BankEdit from "./BankEdit";
 import auth from "../auth/auth-helper"
-import { postBank, putBank } from "./bank-api";
+import { postBank, putBank, deleteBank } from "./bank-api";
 import Alert from "react-s-alert";
+import ModalConfirm from "../components/ModalConfirm";
 
 class BankListPage extends Component {
 
@@ -32,7 +34,9 @@ class BankListPage extends Component {
             isShowModal: false,
             isShowModalAdd: false,
             titleAdd: "Thêm mới nhà cung cấp",
-            title: "Thông tin chi tiết"
+            title: "Thông tin chi tiết",
+            bankId: null,
+            isShowModalConfirm: false
         }
 
         this.delayedCallback = _.debounce(this.search, 250);
@@ -203,8 +207,50 @@ class BankListPage extends Component {
     };
 
 
+    toggleModalConfirm = () => {
+        this.setState(prevState => ({
+            isShowModalConfirm: !prevState.isShowModalConfirm
+        }))
+    }
+
+    showConfirmDelete = itemId => {
+        this.setState(
+            {
+                bankId: itemId
+            },
+            () => this.toggleModalConfirm()
+        )
+    }
+
+    delete = () => {
+        const { redirectLoginPage } = this.props;
+        const jwt = auth.isAuthenticated();
+        deleteBank(jwt, {
+            code: this.state.bankId,
+        }).then(result => {
+            this.setState({ bankeId: null });
+            this.getBanks();
+            this.toggleModalConfirm();
+            Alert.success("Xóa ngân hàng thành công");
+        }, error => {
+            if (error.errorCode) {
+                Alert.error(error.errorMessage);
+                if (error.errorCode === "401") {
+                    redirectLoginPage();
+                }
+            } else {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            }
+        }).catch(err => {
+            redirectLoginPage();
+            Alert.error("Không thể kết nối đến server.");
+        })
+    }
+
+
     render() {
-        const { isShowModalAdd, titleAdd, isShowModal, title } = this.state;
+        const { isShowModalAdd, titleAdd, isShowModal, title, isShowModalConfirm } = this.state;
         const {
             banks,
             loading,
@@ -303,6 +349,14 @@ class BankListPage extends Component {
                                                                 >
                                                                     <i className="glyphicon glyphicon-edit text-blue" />
                                                                 </span>
+                                                                {" "}
+                                                                <span
+                                                                    style={{ color: "#fff", cursor: "pointer" }}
+                                                                    className="small-box-footer"
+                                                                    onClick={() => this.showConfirmDelete(bank.code)}
+                                                                >
+                                                                    <i className="glyphicon glyphicon-trash text-red" />
+                                                                </span>
                                                             </td>
                                                         </tr>
                                                     )
@@ -338,6 +392,11 @@ class BankListPage extends Component {
                     pristine={pristine}
                     submitting={submitting}
                 />
+                <ModalConfirm
+                    isShowModal={isShowModalConfirm}
+                    handleClose={this.toggleModalConfirm}
+                    clickOk={this.delete}
+                />
             </React.Fragment>
         )
     }
@@ -363,7 +422,8 @@ const mapDispatchToProps = dispatch => {
         resetNewBank: () => dispatch(resetNewBank()),
         load: data => dispatch(loadCurrentBank(data)),
         resetCurrentBank: () => dispatch(resetCurrentBank()),
-        resetEditPage: () => dispatch(reset("BankEditPage"))
+        resetEditPage: () => dispatch(reset("BankEditPage")),
+        redirectLoginPage: () => dispatch(redirectToLoginAction())
     }
 }
 

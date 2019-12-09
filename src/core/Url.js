@@ -19,6 +19,7 @@ const Urls = {
   GetBanks: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/bank`,
   PostBank: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/bank`,
   PutBank: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/bank`,
+  DeleteBank: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/bank`,
 };
 
 export default Urls;
