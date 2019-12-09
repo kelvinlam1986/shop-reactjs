@@ -2,14 +2,21 @@ import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { reset } from "redux-form";
-import { getBanksAction, setLoadingBank, resetNewBank } from "./bank-action-creator"
+import {
+    getBanksAction,
+    setLoadingBank,
+    resetNewBank,
+    loadCurrentBank,
+    resetCurrentBank
+} from "./bank-action-creator"
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 import config from "../config";
 import _ from "lodash";
 import BankAdd from "./BankAdd";
+import BankEdit from "./BankEdit";
 import auth from "../auth/auth-helper"
-import { postBank } from "./bank-api";
+import { postBank, putBank } from "./bank-api";
 import Alert from "react-s-alert";
 
 class BankListPage extends Component {
@@ -22,8 +29,10 @@ class BankListPage extends Component {
                 pageSize: config.pageSize,
                 keyword: ""
             },
+            isShowModal: false,
             isShowModalAdd: false,
-            titleAdd: "Thêm mới nhà cung cấp"
+            titleAdd: "Thêm mới nhà cung cấp",
+            title: "Thông tin chi tiết"
         }
 
         this.delayedCallback = _.debounce(this.search, 250);
@@ -130,8 +139,72 @@ class BankListPage extends Component {
         this.setState({ isShowModalAdd: false });
     };
 
+    updateBank = values => {
+        const {
+            resetEditPage,
+            resetCurrentBank,
+            redirectLoginPage
+        } = this.props;
+
+        this.setState({ isShowModal: false });
+        const jwt = auth.isAuthenticated();
+        putBank(
+            jwt,
+            {
+                code: values.code,
+                name: values.name,
+                address: values.address,
+            }
+        )
+            .then(
+                result => {
+                    resetEditPage();
+                    resetCurrentBank();
+                    Alert.success("Lưu ngân hàng thành công");
+                    this.getBanks();
+                },
+                error => {
+                    if (error.errorCode) {
+                        Alert.error(error.errorMessage);
+                        if (error.errorCode === "401") {
+                            redirectLoginPage();
+                        }
+                    } else {
+                        redirectLoginPage();
+                        Alert.error("Không thể kết nối đến server.");
+                    }
+                }
+            )
+            .catch(err => {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            });
+    }
+
+    handleClose = e => {
+        const { resetEditPage, resetCurrentBank } = this.props;
+        resetEditPage();
+        resetCurrentBank();
+        this.setState({ isShowModal: false });
+    }
+
+    showDetail = index => {
+        this.handleShow(index);
+    };
+
+    handleShow = index => {
+        const currentBank = this.props.banks[index];
+        this.setState({
+            isShowModal: true,
+            title: `Thông tin chi tiết: ${currentBank.code} ${currentBank.name}`
+        }, () => {
+            this.props.load(this.props.banks[index]);
+        })
+    };
+
+
     render() {
-        const { isShowModalAdd, titleAdd } = this.state;
+        const { isShowModalAdd, titleAdd, isShowModal, title } = this.state;
         const {
             banks,
             loading,
@@ -226,6 +299,7 @@ class BankListPage extends Component {
                                                                 <span
                                                                     style={{ color: "#fff", cursor: "pointer" }}
                                                                     className="small-box-footer"
+                                                                    onClick={() => this.showDetail(index)}
                                                                 >
                                                                     <i className="glyphicon glyphicon-edit text-blue" />
                                                                 </span>
@@ -256,6 +330,14 @@ class BankListPage extends Component {
                     pristine={pristine}
                     submitting={submitting}
                 />
+                <BankEdit
+                    isShowModal={isShowModal}
+                    handleClose={this.handleClose}
+                    title={title}
+                    updateBank={this.updateBank}
+                    pristine={pristine}
+                    submitting={submitting}
+                />
             </React.Fragment>
         )
     }
@@ -278,7 +360,10 @@ const mapDispatchToProps = dispatch => {
         getBanks: params => dispatch(getBanksAction(params)),
         setLoading: isLoading => dispatch(setLoadingBank(isLoading)),
         resetAddPage: () => dispatch(reset("BankAddPage")),
-        resetNewBank: () => dispatch(resetNewBank())
+        resetNewBank: () => dispatch(resetNewBank()),
+        load: data => dispatch(loadCurrentBank(data)),
+        resetCurrentBank: () => dispatch(resetCurrentBank()),
+        resetEditPage: () => dispatch(reset("BankEditPage"))
     }
 }
 

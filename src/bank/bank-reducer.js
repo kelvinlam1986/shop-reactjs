@@ -1,4 +1,12 @@
-import { SET_LOADING_BANK, GET_BANKS, GET_BANKS_SUCCESS, GET_BANKS_FAILED } from "./bank-action-creator";
+import {
+    SET_LOADING_BANK,
+    GET_BANKS,
+    GET_BANKS_SUCCESS,
+    GET_BANKS_FAILED,
+    RESET_NEW_BANK,
+    LOAD_CURRENT_BANK,
+    RESET_CURRENT_BANK
+} from "./bank-action-creator";
 
 
 const bankInitialState = {
@@ -42,6 +50,26 @@ const bankReducer = (state = bankInitialState, action) => {
                 loading: false,
                 banks: null,
                 error: action.payload.error
+            });
+        case RESET_NEW_BANK:
+            return Object.assign({}, state, {
+                addNewBank: {
+                    code: "",
+                    name: "",
+                    address: "",
+                }
+            });
+        case LOAD_CURRENT_BANK:
+            return Object.assign({}, state, {
+                currentBank: action.payload.currentBank
+            });
+        case RESET_CURRENT_BANK:
+            return Object.assign({}, state, {
+                currentBank: {
+                    code: "",
+                    name: "",
+                    address: "",
+                }
             });
         default:
             return state;
