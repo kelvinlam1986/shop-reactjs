@@ -8,6 +8,7 @@ import SupplierListPage from "./supplier/SupplierListPage";
 import PurchaseListPage from "./purchase/PurchaseListPage";
 import PrivateRoute from "./core/PrivateRoute";
 import BankListPage from "./bank/BankListPage";
+import CountryListPage from "./country/CountryListPage";
 import { SignInForm } from "./auth/SignIn";
 
 export default class MainRouter extends Component {
@@ -20,6 +21,7 @@ export default class MainRouter extends Component {
         <PrivateRoute exact path="/suppliers" component={SupplierListPage} />
         <PrivateRoute exact path="/purchase" component={PurchaseListPage} />
         <PrivateRoute exact path="/banks" component={BankListPage} />
+        <PrivateRoute exact path="/countries" component={CountryListPage} />
         <PrivateRoute exact path="/" component={Home} />
         <Route path="/signin" component={props => <SignInForm {...props} />} />
       </React.Fragment>

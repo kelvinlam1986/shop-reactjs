@@ -54,6 +54,12 @@ const Menu = withRouter(({ history, username }) => (
                       </Link>
                     </li>
                     <li>
+                      <Link to="/countries">
+                        <i className="glyphicon glyphicon-plane text-green" />
+                        Quốc gia
+                      </Link>
+                    </li>
+                    <li>
                       <Link to="/customers">
                         <i className="glyphicon glyphicon-user text-green" />{" "}
                         Khách hàng
