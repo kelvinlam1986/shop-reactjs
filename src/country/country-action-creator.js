@@ -2,6 +2,8 @@ const GET_COUNTRIES = "GET_COUNTRIES";
 const GET_COUNTRIES_SUCCESS = "GET_COUNTRIES_SUCCESS";
 const GET_COUNTRIES_FAILED = "GET_COUNTRIES_FAILED";
 const SET_LOADING_COUNTRY = "SET_LOADING_COUNTRY";
+const LOAD_CURRENT_COUNTRY = "LOAD_CURRENT_COUNTRY";
+const RESET_CURRENT_COUNTRY = "RESET_CURRENT_COUNTRY";
 
 const setLoadingCountry = isLoading => {
     return {
@@ -32,14 +34,26 @@ const getCountriesActionFailed = error => {
     return { type: GET_COUNTRIES_FAILED, payload: { error: error } };
 };
 
+const loadCurrentCountry = currentCountry => {
+    return { type: LOAD_CURRENT_COUNTRY, payload: { currentCountry } };
+};
+
+const resetCurrentCountry = () => {
+    return { type: RESET_CURRENT_COUNTRY };
+};
+
 export {
     SET_LOADING_COUNTRY,
     GET_COUNTRIES,
     GET_COUNTRIES_FAILED,
     GET_COUNTRIES_SUCCESS,
+    LOAD_CURRENT_COUNTRY,
+    RESET_CURRENT_COUNTRY,
     setLoadingCountry,
     getCountriesAction,
     getCountriesActionFailed,
-    getCountriesActionSuccess
+    getCountriesActionSuccess,
+    loadCurrentCountry,
+    resetCurrentCountry
 };
 

@@ -20,4 +20,20 @@ const getCountries = (credential, params) => {
         });
 }
 
-export { getCountries };
+const putCountry = (credential, params) => {
+    return fetch(Urls.PutCountry, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + credential.access_token
+        },
+        body: JSON.stringify({
+            code: params.code,
+            name: params.name
+        })
+    }).then(response => handleJSONResponse(response),
+        err => handleJSONResponse(err)
+    ).catch(err => console.log(err));
+}
+
+export { getCountries, putCountry };

@@ -3,9 +3,15 @@ import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import config from "../config"
 import _ from "lodash";
-import { getCountriesAction, setLoadingCountry } from "./country-action-creator"
+import { getCountriesAction, setLoadingCountry, resetCurrentCountry, loadCurrentCountry } from "./country-action-creator"
 import Pagination from "../components/Pagination";
 import Loading from "../components/Loading";
+import CountryEdit from "./CountryEdit";
+import auth from "../auth/auth-helper";
+import { putCountry } from "./country-api";
+import Alert from "react-s-alert";
+import { reset } from "redux-form"
+import { redirectToLoginAction } from "../core/core-action-creator";
 
 class CountryListPage extends Component {
     constructor(props) {
@@ -16,6 +22,8 @@ class CountryListPage extends Component {
                 pageSize: config.pageSize,
                 keyword: ""
             },
+            title: "Thông tin chi tiết",
+            isShowModal: false,
         }
 
         this.delayedCallback = _.debounce(this.search, 250);
@@ -67,13 +75,78 @@ class CountryListPage extends Component {
         );
     };
 
+    handleClose = e => {
+        const { resetEditPage, resetCurrentCountry } = this.props;
+        resetEditPage();
+        resetCurrentCountry();
+        this.setState({ isShowModal: false });
+    }
+
+    showDetail = index => {
+        this.handleShow(index);
+    };
+
+    handleShow = index => {
+        const currentCountry = this.props.countries[index];
+        this.setState({
+            isShowModal: true,
+            title: `Thông tin chi tiết: ${currentCountry.code} ${currentCountry.name}`
+        }, () => {
+            this.props.load(this.props.countries[index]);
+        })
+    };
+
+    updateCountry = values => {
+        const {
+            resetEditPage,
+            resetCurrentCountry,
+            redirectLoginPage
+        } = this.props;
+
+        this.setState({ isShowModal: false });
+        const jwt = auth.isAuthenticated();
+        putCountry(
+            jwt,
+            {
+                code: values.code,
+                name: values.name,
+            }
+        )
+            .then(
+                result => {
+                    resetEditPage();
+                    resetCurrentCountry();
+                    Alert.success("Lưu quốc gia thành công");
+                    this.getCountries();
+                },
+                error => {
+                    if (error.errorCode) {
+                        Alert.error(error.errorMessage);
+                        if (error.errorCode === "401") {
+                            redirectLoginPage();
+                        }
+                    } else {
+                        redirectLoginPage();
+                        Alert.error("Không thể kết nối đến server.");
+                    }
+                }
+            )
+            .catch(err => {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            });
+    }
+
     render() {
+        const { isShowModal, title } = this.state
         const {
             countries,
             loading,
             redirectToLogin,
             totalPages,
             page,
+            pristine,
+            submitting,
         } = this.props;
 
         const from = { pathname: "/signin" };
@@ -157,6 +230,7 @@ class CountryListPage extends Component {
                                                                 <span
                                                                     style={{ color: "#fff", cursor: "pointer" }}
                                                                     className="small-box-footer"
+                                                                    onClick={() => this.showDetail(index)}
                                                                 >
                                                                     <i className="glyphicon glyphicon-edit text-blue" />
                                                                 </span>
@@ -186,6 +260,14 @@ class CountryListPage extends Component {
                         </div>
                     </div>
                 </section>
+                <CountryEdit
+                    isShowModal={isShowModal}
+                    handleClose={this.handleClose}
+                    title={title}
+                    updateCountry={this.updateCountry}
+                    pristine={pristine}
+                    submitting={submitting}
+                />
             </React.Fragment>
         )
     }
@@ -199,7 +281,8 @@ const mapStateToProps = state => {
         countries,
         redirectToLogin,
         totalPages,
-        page
+        page,
+
     };
 }
 
@@ -207,6 +290,10 @@ const mapDispatchToProps = dispatch => {
     return {
         getCountries: params => dispatch(getCountriesAction(params)),
         setLoading: isLoading => dispatch(setLoadingCountry(isLoading)),
+        resetCurrentCountry: () => dispatch(resetCurrentCountry()),
+        resetEditPage: () => dispatch(reset("CountryEditPage")),
+        redirectLoginPage: () => dispatch(redirectToLoginAction()),
+        load: data => dispatch(loadCurrentCountry(data)),
     }
 }
 

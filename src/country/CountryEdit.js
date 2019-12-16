@@ -1,14 +1,13 @@
 import React, { Component } from "react";
+import RegisterModal from "../components/RegisterModal"
 import { Form } from "react-bootstrap";
 import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
-import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
-import renderTextArea from "../components/AdvanceTextArea";
 
 const validate = values => {
     const errors = {};
-    const requiredFields = ["name", "address", "code"];
+    const requiredFields = ["name", "code"];
     requiredFields.forEach(field => {
         if (!values[field]) {
             if (field === "code") {
@@ -16,18 +15,14 @@ const validate = values => {
             }
 
             if (field === "name") {
-                errors[field] = "Bạn phải nhập Tên ngân hàng !";
-            }
-
-            if (field === "address") {
-                errors[field] = "Bạn phải nhập Địa chỉ !";
+                errors[field] = "Bạn phải nhập Tên quốc gia !";
             }
         }
     });
     return errors;
 };
 
-class BankEdit extends Component {
+class CountryEdit extends Component {
     render() {
         const {
             handleSubmit,
@@ -35,7 +30,7 @@ class BankEdit extends Component {
             handleClose,
             container,
             title,
-            updateBank,
+            updateCountry,
             pristine,
             submitting
         } = this.props;
@@ -48,7 +43,7 @@ class BankEdit extends Component {
                 title={title}
                 hiddenFooter={false}
                 showCancel={true}
-                clickOK={handleSubmit(updateBank)}
+                clickOK={handleSubmit(updateCountry)}
                 okText="Lưu"
                 pristine={pristine}
                 submitting={submitting}>
@@ -60,8 +55,7 @@ class BankEdit extends Component {
                         autofocus
                         input={{ disabled: true }}
                     />
-                    <Field name="name" component={renderInput} label="Tên ngân hàng" />
-                    <Field name="address" component={renderTextArea} label="Địa chỉ" />
+                    <Field name="name" component={renderInput} label="Tên quốc gia" />
                 </Form>
             </RegisterModal>
         )
@@ -69,16 +63,16 @@ class BankEdit extends Component {
 }
 
 const mapStateToProps = state => {
-    const { currentBank } = state.bank;
+    const { currentCountry } = state.country;
     return {
-        initialValues: currentBank
+        initialValues: currentCountry
     };
 };
 
 const rxForm = reduxForm({
-    form: "BankEditPage",
+    form: "CountryEditPage",
     enableReinitialize: true,
     validate
-})(BankEdit);
+})(CountryEdit);
 
 export default connect(mapStateToProps)(rxForm);

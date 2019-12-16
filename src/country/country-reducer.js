@@ -2,7 +2,9 @@ import {
     SET_LOADING_COUNTRY,
     GET_COUNTRIES,
     GET_COUNTRIES_SUCCESS,
-    GET_COUNTRIES_FAILED
+    GET_COUNTRIES_FAILED,
+    LOAD_CURRENT_COUNTRY,
+    RESET_CURRENT_COUNTRY
 } from "./country-action-creator"
 
 const countryInitialState = {
@@ -44,6 +46,17 @@ const countryReducer = (state = countryInitialState, action) => {
                 loading: false,
                 countries: null,
                 error: action.payload.error
+            });
+        case LOAD_CURRENT_COUNTRY:
+            return Object.assign({}, state, {
+                currentCountry: action.payload.currentCountry
+            });
+        case RESET_CURRENT_COUNTRY:
+            return Object.assign({}, state, {
+                currentCountry: {
+                    code: "",
+                    name: "",
+                }
             });
         default:
             return state;
