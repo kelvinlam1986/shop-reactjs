@@ -45,6 +45,16 @@ class CountryListPage extends Component {
         );
     };
 
+    onChangeSearch = e => {
+        e.persist();
+        this.props.setLoading(true);
+        this.delayedCallback(e);
+    };
+
+    onClickSearch = e => {
+        this.getCountries();
+    };
+
     handlePageClick = e => {
         this.setState(
             {
@@ -108,11 +118,13 @@ class CountryListPage extends Component {
                                                 name="table_search"
                                                 className="form-control pull-right"
                                                 placeholder="Tìm kiếm"
+                                                onChange={this.onChangeSearch}
                                             />
                                             <div className="input-group-btn">
                                                 <button
                                                     type="submit"
                                                     className="btn btn-default"
+                                                    onClick={this.onClickSearch}
                                                 >
                                                     <i className="fa fa-search"></i>
                                                 </button>
