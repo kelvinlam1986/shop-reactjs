@@ -4,7 +4,8 @@ import {
     GET_COUNTRIES_SUCCESS,
     GET_COUNTRIES_FAILED,
     LOAD_CURRENT_COUNTRY,
-    RESET_CURRENT_COUNTRY
+    RESET_CURRENT_COUNTRY,
+    RESET_NEW_COUNTRY
 } from "./country-action-creator"
 
 const countryInitialState = {
@@ -54,6 +55,13 @@ const countryReducer = (state = countryInitialState, action) => {
         case RESET_CURRENT_COUNTRY:
             return Object.assign({}, state, {
                 currentCountry: {
+                    code: "",
+                    name: "",
+                }
+            });
+        case RESET_NEW_COUNTRY:
+            return Object.assign({}, state, {
+                addNewCountry: {
                     code: "",
                     name: "",
                 }

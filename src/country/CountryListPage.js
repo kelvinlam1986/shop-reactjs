@@ -3,15 +3,22 @@ import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import config from "../config"
 import _ from "lodash";
-import { getCountriesAction, setLoadingCountry, resetCurrentCountry, loadCurrentCountry } from "./country-action-creator"
+import {
+    getCountriesAction,
+    setLoadingCountry,
+    resetCurrentCountry,
+    loadCurrentCountry,
+    resetNewCountry
+} from "./country-action-creator"
 import Pagination from "../components/Pagination";
 import Loading from "../components/Loading";
 import CountryEdit from "./CountryEdit";
 import auth from "../auth/auth-helper";
-import { putCountry } from "./country-api";
+import { putCountry, postCountry } from "./country-api";
 import Alert from "react-s-alert";
 import { reset } from "redux-form"
 import { redirectToLoginAction } from "../core/core-action-creator";
+import CountryAdd from "./CountryAdd";
 
 class CountryListPage extends Component {
     constructor(props) {
@@ -24,6 +31,8 @@ class CountryListPage extends Component {
             },
             title: "Thông tin chi tiết",
             isShowModal: false,
+            isShowModalAdd: false,
+            titleAdd: "Thêm mới quốc gia",
         }
 
         this.delayedCallback = _.debounce(this.search, 250);
@@ -137,8 +146,62 @@ class CountryListPage extends Component {
             });
     }
 
+    handleShowAdd = () => {
+        this.setState({
+            isShowModalAdd: true,
+        });
+    }
+
+    handleCloseAdd = e => {
+        const { resetAddPage, resetNewCountry } = this.props;
+        resetAddPage();
+        resetNewCountry();
+        this.setState({ isShowModalAdd: false });
+    };
+
+    addCountry = values => {
+        const {
+            resetAddPage,
+            resetNewCountry,
+            redirectLoginPage
+        } = this.props;
+
+        this.setState({ isShowModalAdd: false });
+        const jwt = auth.isAuthenticated();
+        postCountry(
+            jwt,
+            {
+                code: values.code,
+                name: values.name,
+            }
+        )
+            .then(
+                result => {
+                    resetAddPage();
+                    resetNewCountry();
+                    Alert.success("Lưu quốc gia thành công");
+                    this.getCountries();
+                },
+                error => {
+                    if (error.errorCode) {
+                        Alert.error(error.errorMessage);
+                        if (error.errorCode === "401") {
+                            redirectLoginPage();
+                        }
+                    } else {
+                        redirectLoginPage();
+                        Alert.error("Không thể kết nối đến server.");
+                    }
+                }
+            )
+            .catch(err => {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            });
+    }
+
     render() {
-        const { isShowModal, title } = this.state
+        const { isShowModal, title, isShowModalAdd, titleAdd } = this.state
         const {
             countries,
             loading,
@@ -164,7 +227,8 @@ class CountryListPage extends Component {
                         </Link>
                         {" "}
                         <button type="button"
-                            className="btn btn-md btn-primary">Thêm mới</button>
+                            className="btn btn-md btn-primary"
+                            onClick={this.handleShowAdd}>Thêm mới</button>
                     </h1>
                     <ol className="breadcrumb">
                         <li>
@@ -260,6 +324,14 @@ class CountryListPage extends Component {
                         </div>
                     </div>
                 </section>
+                <CountryAdd
+                    isShowModal={isShowModalAdd}
+                    handleClose={this.handleCloseAdd}
+                    title={titleAdd}
+                    addCountry={this.addCountry}
+                    pristine={pristine}
+                    submitting={submitting}
+                />
                 <CountryEdit
                     isShowModal={isShowModal}
                     handleClose={this.handleClose}
@@ -294,6 +366,8 @@ const mapDispatchToProps = dispatch => {
         resetEditPage: () => dispatch(reset("CountryEditPage")),
         redirectLoginPage: () => dispatch(redirectToLoginAction()),
         load: data => dispatch(loadCurrentCountry(data)),
+        resetAddPage: () => dispatch(reset("CountryAddPage")),
+        resetNewCountry: () => dispatch(resetNewCountry()),
     }
 }
 

@@ -36,4 +36,25 @@ const putCountry = (credential, params) => {
     ).catch(err => console.log(err));
 }
 
-export { getCountries, putCountry };
+const postCountry = (credential, params) => {
+    return fetch(Urls.PostCountry, {
+        method: "Post",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + credential.access_token
+        },
+        body: JSON.stringify({
+            code: params.code,
+            name: params.name,
+        })
+    })
+        .then(
+            response => handleJSONResponse(response),
+            error => handleJSONResponse(error)
+        )
+        .catch(err => {
+            throw err;
+        });
+}
+
+export { getCountries, putCountry, postCountry };

@@ -33,7 +33,7 @@ class BankListPage extends Component {
             },
             isShowModal: false,
             isShowModalAdd: false,
-            titleAdd: "Thêm mới nhà cung cấp",
+            titleAdd: "Thêm mới ngân hàng",
             title: "Thông tin chi tiết",
             bankId: null,
             isShowModalConfirm: false
