@@ -14,11 +14,12 @@ import Pagination from "../components/Pagination";
 import Loading from "../components/Loading";
 import CountryEdit from "./CountryEdit";
 import auth from "../auth/auth-helper";
-import { putCountry, postCountry } from "./country-api";
+import { putCountry, postCountry, deleteCountry } from "./country-api";
 import Alert from "react-s-alert";
 import { reset } from "redux-form"
 import { redirectToLoginAction } from "../core/core-action-creator";
 import CountryAdd from "./CountryAdd";
+import ModalConfirm from "../components/ModalConfirm";
 
 class CountryListPage extends Component {
     constructor(props) {
@@ -33,6 +34,8 @@ class CountryListPage extends Component {
             isShowModal: false,
             isShowModalAdd: false,
             titleAdd: "Thêm mới quốc gia",
+            countryId: null,
+            isShowModalConfirm: false
         }
 
         this.delayedCallback = _.debounce(this.search, 250);
@@ -200,8 +203,48 @@ class CountryListPage extends Component {
             });
     }
 
+    toggleModalConfirm = () => {
+        this.setState(prevState => ({
+            isShowModalConfirm: !prevState.isShowModalConfirm
+        }))
+    }
+
+    showConfirmDelete = itemId => {
+        this.setState(
+            {
+                countryId: itemId
+            },
+            () => this.toggleModalConfirm()
+        )
+    }
+    delete = () => {
+        const { redirectLoginPage } = this.props;
+        const jwt = auth.isAuthenticated();
+        deleteCountry(jwt, {
+            code: this.state.countryId,
+        }).then(result => {
+            this.setState({ countryId: null });
+            this.getCountries();
+            this.toggleModalConfirm();
+            Alert.success("Xóa quốc gia thành công");
+        }, error => {
+            if (error.errorCode) {
+                Alert.error(error.errorMessage);
+                if (error.errorCode === "401") {
+                    redirectLoginPage();
+                }
+            } else {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            }
+        }).catch(err => {
+            redirectLoginPage();
+            Alert.error("Không thể kết nối đến server.");
+        })
+    }
+
     render() {
-        const { isShowModal, title, isShowModalAdd, titleAdd } = this.state
+        const { isShowModal, title, isShowModalAdd, titleAdd, isShowModalConfirm } = this.state
         const {
             countries,
             loading,
@@ -302,6 +345,7 @@ class CountryListPage extends Component {
                                                                 <span
                                                                     style={{ color: "#fff", cursor: "pointer" }}
                                                                     className="small-box-footer"
+                                                                    onClick={() => this.showConfirmDelete(country.code)}
                                                                 >
                                                                     <i className="glyphicon glyphicon-trash text-red" />
                                                                 </span>
@@ -339,6 +383,11 @@ class CountryListPage extends Component {
                     updateCountry={this.updateCountry}
                     pristine={pristine}
                     submitting={submitting}
+                />
+                <ModalConfirm
+                    isShowModal={isShowModalConfirm}
+                    handleClose={this.toggleModalConfirm}
+                    clickOk={this.delete}
                 />
             </React.Fragment>
         )

@@ -23,6 +23,7 @@ const Urls = {
   GetCountry: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/country`,
   PutCountry: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/country`,
   PostCountry: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/country`,
+  DeleteCountry: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/country`,
 };
 
 export default Urls;

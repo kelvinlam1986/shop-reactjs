@@ -10,7 +10,7 @@ const ModalConfirm = ({ isShowModal, clickOk, handleClose }) => {
                     <Button bsStyle="danger" onClick={clickOk}>
                         Xác nhận
                     </Button>{' '}
-                    <Button bsStyle="secondary" onClick={handleClose}>
+                    <Button bsStyle="default" onClick={handleClose}>
                         Huỷ bỏ
                     </Button>
                 </Modal.Footer>

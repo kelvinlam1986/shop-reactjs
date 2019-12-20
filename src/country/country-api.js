@@ -57,4 +57,21 @@ const postCountry = (credential, params) => {
         });
 }
 
-export { getCountries, putCountry, postCountry };
+const deleteCountry = (credential, params) => {
+    return fetch(Urls.DeleteCountry, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + credential.access_token
+        },
+        body: JSON.stringify({
+            code: params.code
+        })
+    }).then(res => handleJSONResponse(res),
+        err => handleJSONResponse(err))
+        .catch(err => {
+            throw err
+        })
+}
+
+export { getCountries, putCountry, postCountry, deleteCountry };
