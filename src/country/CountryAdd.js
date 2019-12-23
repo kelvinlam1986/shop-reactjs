@@ -4,10 +4,12 @@ import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
+import _ from "lodash";
 
 const validate = values => {
     const errors = {};
     const requiredFields = ["name", "code"];
+    const lengthFields = ["code"]
     requiredFields.forEach(field => {
         if (!values[field]) {
             if (field === "code") {
@@ -19,6 +21,16 @@ const validate = values => {
             }
         }
     });
+
+    lengthFields.forEach(field => {
+        if (field === "code") {
+            if (_.isEmpty(values) === false && values[field].length > 3) {
+                errors[field] = `Chiều dài Mã quốc gia phải nhỏ hơn 3 !`;
+            }
+        }
+
+    });
+
     return errors;
 };
 

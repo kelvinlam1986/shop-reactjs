@@ -5,10 +5,12 @@ import { connect } from "react-redux";
 import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
 import renderTextArea from "../components/AdvanceTextArea";
+import _ from "lodash";
 
 const validate = values => {
     const errors = {};
     const requiredFields = ["name", "address", "code"];
+    const lengthFields = ["code"]
     requiredFields.forEach(field => {
         if (!values[field]) {
             if (field === "code") {
@@ -23,6 +25,15 @@ const validate = values => {
                 errors[field] = "Bạn phải nhập Địa chỉ !";
             }
         }
+    });
+
+    lengthFields.forEach(field => {
+        if (field === "code") {
+            if (_.isEmpty(values) === false && values[field].length > 3) {
+                errors[field] = `Chiều dài Mã ngân hàng phải nhỏ hơn 3 !`;
+            }
+        }
+
     });
     return errors;
 };
