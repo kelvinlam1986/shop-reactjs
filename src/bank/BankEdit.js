@@ -70,7 +70,6 @@ class BankEdit extends Component {
                         component={renderInput}
                         label="Mã"
                         autofocus
-                        input={{ disabled: true }}
                     />
                     <Field name="name" component={renderInput} label="Tên ngân hàng" />
                     <Field name="address" component={renderTextArea} label="Địa chỉ" />

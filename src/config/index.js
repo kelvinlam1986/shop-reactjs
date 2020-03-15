@@ -7,7 +7,7 @@ const config = {
       : process.env.HOST_NAME,
   apiPort:
     process.env.NODE_ENV === "development"
-      ? 5000
+      ? 18451
       : process.env.DEFAULT_API_PORT,
   apiVersioning:
     process.env.NODE_ENV === "development"

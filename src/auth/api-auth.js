@@ -3,13 +3,12 @@ import Urls from "../core/Url";
 const signin = user => {
   return fetch(Urls.Token, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    credentials: "include",
-    body: `username=${user.username}&password=${
-      user.password
-    }&client_id=ShopApi&grant_type=password&scope=offine_access profile email`
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: user.username,
+      password: user.password
   })
-    .then(res => {
+ }).then(res => {
       if (res.ok) {
         return res.json();
       } else {
