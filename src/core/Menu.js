@@ -48,6 +48,12 @@ const Menu = withRouter(({ history, username }) => (
                       </Link>
                     </li> */}
                     <li>
+                      <Link to="/customer_type">
+                        <i className="glyphicon glyphicon-user text-green" />
+                        Loại khách hàng
+                      </Link>
+                    </li>
+                    <li>
                       <Link to="/banks">
                         <i className="glyphicon glyphicon-piggy-bank text-green" />
                         Ngân hàng

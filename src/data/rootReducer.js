@@ -7,6 +7,7 @@ import productReducer from "../product/product-reducer";
 import supplierReducer from "../supplier/supplier-reducer";
 import bankReducer from "../bank/bank-reducer";
 import countryReducer from "../country/country-reducer";
+import customerTypeReducer from "../customer_type/customerType-reducer";
 
 const rootReducer = combineReducers({
   form: formReducer,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
   product: productReducer,
   supplier: supplierReducer,
   bank: bankReducer,
-  country: countryReducer
+  country: countryReducer,
+  customerType: customerTypeReducer
 });
 
 export default rootReducer;

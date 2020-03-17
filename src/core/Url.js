@@ -24,6 +24,10 @@ const Urls = {
   PutCountry: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/country`,
   PostCountry: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/country`,
   DeleteCountry: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/country`,
+  GetCustomerTypes: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer_type`,
+  PostCustomerType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer_type`,
+  PutCustomerType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer_type`,
+  DeleteCustomerType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer_type`,
 };
 
 export default Urls;
