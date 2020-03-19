@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { reset } from "redux-form";
 import config from "../config";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
@@ -8,12 +9,16 @@ import _ from "lodash";
 import {
     getCustomerTypesAction,
     setLoadingCustomerType,
-    // resetNewBank,
+    resetNewCustomerType,
     // loadCurrentBank,
     // resetCurrentBank
 } from "./customerType-action-creator"
+import auth from "../auth/auth-helper"
 
 import { redirectToLoginAction } from "../core/core-action-creator";
+import CustomerTypeAdd from "./CustomerTypeAdd";
+import { postCustomerType, putCustomerType } from "./customerType-api";
+import Alert from "react-s-alert";
 
 class CustomerTypeListPage extends Component {
 
@@ -71,16 +76,71 @@ class CustomerTypeListPage extends Component {
         this.getCustomerTypes();
     };
 
+    handleShowAdd = () => {
+        this.setState({
+            isShowModalAdd: true,
+        });
+    }
+
+    handleCloseAdd = e => {
+        const { resetAddPage, resetNewCustomerType } = this.props;
+        resetAddPage();
+        resetNewCustomerType();
+        this.setState({ isShowModalAdd: false });
+    };
+
+    addCustomerType = values => {
+        const {
+            resetAddPage,
+            resetNewCustomerType,
+            redirectLoginPage
+        } = this.props;
+
+        this.setState({ isShowModalAdd: false });
+        const jwt = auth.isAuthenticated();
+        postCustomerType(
+            jwt,
+            {
+                code: values.code,
+                name: values.name
+            }
+        )
+            .then(
+                result => {
+                    resetAddPage();
+                    resetNewCustomerType();
+                    Alert.success("Lưu loại khách hàng thành công");
+                    this.getCustomerTypes();
+                },
+                error => {
+                    if (error.errorCode) {
+                        Alert.error(error.errorMessage);
+                        if (error.errorCode === "401") {
+                            redirectLoginPage();
+                        }
+                    } else {
+                        redirectLoginPage();
+                        Alert.error("Không thể kết nối đến server.");
+                    }
+                }
+            )
+            .catch(err => {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            });
+    }
+
 
     render() {
+        const { isShowModalAdd, titleAdd, isShowModal, title, isShowModalConfirm } = this.state;
         const {
             customerTypes,
             loading,
             redirectToLogin,
             totalPages,
             page,
-            // pristine,
-            // submitting,
+            pristine,
+            submitting,
         } = this.props;
 
         
@@ -195,6 +255,14 @@ class CustomerTypeListPage extends Component {
                         </div>
                     </div>
                 </section>
+                <CustomerTypeAdd
+                    isShowModal={isShowModalAdd}
+                    handleClose={this.handleCloseAdd}
+                    title={titleAdd}
+                    addCustomerType={this.addCustomerType}
+                    pristine={pristine}
+                    submitting={submitting}
+                />
             </React.Fragment>
         )
     }
@@ -217,6 +285,8 @@ const mapDispatchToProps = dispatch => {
     return {
       getCustomerTypes: params => dispatch(getCustomerTypesAction(params)),
     //   load: data => dispatch(loadCurrentCustomer(data)),
+      resetAddPage: () => dispatch(reset("CustomerTypeAddPage")),
+      resetNewCustomerType: () => dispatch(resetNewCustomerType()),
     //   resetEditPage: () => dispatch(reset("CustomerEditPage")),
     //   resetCurrentCustomer: () => dispatch(resetCurrentCustomer()),
       redirectLoginPage: () => dispatch(redirectToLoginAction()),
