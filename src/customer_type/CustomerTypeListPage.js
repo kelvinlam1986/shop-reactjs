@@ -10,13 +10,14 @@ import {
     getCustomerTypesAction,
     setLoadingCustomerType,
     resetNewCustomerType,
-    // loadCurrentBank,
-    // resetCurrentBank
+    loadCurrentCustomerType,
+    resetCurrentCustomerType
 } from "./customerType-action-creator"
 import auth from "../auth/auth-helper"
 
 import { redirectToLoginAction } from "../core/core-action-creator";
 import CustomerTypeAdd from "./CustomerTypeAdd";
+import CustomerTypeEdit from "./CustomerTypeEdit";
 import { postCustomerType, putCustomerType } from "./customerType-api";
 import Alert from "react-s-alert";
 
@@ -130,6 +131,61 @@ class CustomerTypeListPage extends Component {
             });
     }
 
+    updateCustomerType = values => {
+        const {
+            resetEditPage,
+            resetCurrentCustomerType,
+            redirectLoginPage
+        } = this.props;
+
+        this.setState({ isShowModal: false });
+        const jwt = auth.isAuthenticated();
+        putCustomerType(
+            jwt,
+            {
+                code: values.code,
+                name: values.name
+            }
+        )
+            .then(
+                result => {
+                    resetEditPage();
+                    resetCurrentCustomerType();
+                    Alert.success("Lưu loại khách hàng thành công");
+                    this.getCustomerTypes();
+                },
+                error => {
+                    if (error.errorCode) {
+                        Alert.error(error.errorMessage);
+                        if (error.errorCode === "401") {
+                            redirectLoginPage();
+                        }
+                    } else {
+                        redirectLoginPage();
+                        Alert.error("Không thể kết nối đến server.");
+                    }
+                }
+            )
+            .catch(err => {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            });
+    }
+
+    showDetail = index => {
+        this.handleShow(index);
+    };
+
+    handleShow = index => {
+        const currentCustomerType = this.props.customerTypes[index];
+        this.setState({
+            isShowModal: true,
+            title: `Thông tin chi tiết: ${currentCustomerType.code} ${currentCustomerType.name}`
+        }, () => {
+            this.props.load(this.props.customerTypes[index]);
+        })
+    };
+
 
     render() {
         const { isShowModalAdd, titleAdd, isShowModal, title, isShowModalConfirm } = this.state;
@@ -225,7 +281,7 @@ class CustomerTypeListPage extends Component {
                                                                 <span
                                                                 style={{ color: "#fff", cursor: "pointer" }}
                                                                 className="small-box-footer"
-                                                                onClick={() => this.showDetail(1)}
+                                                                onClick={() => this.showDetail(index)}
                                                                 >
                                                                 <i className="glyphicon glyphicon-edit text-blue" />
                                                                 </span>
@@ -263,6 +319,14 @@ class CustomerTypeListPage extends Component {
                     pristine={pristine}
                     submitting={submitting}
                 />
+                <CustomerTypeEdit
+                    isShowModal={isShowModal}
+                    handleClose={this.handleClose}
+                    title={title}
+                    updateCustomerType={this.updateCustomerType}
+                    pristine={pristine}
+                    submitting={submitting}
+                />
             </React.Fragment>
         )
     }
@@ -284,11 +348,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
       getCustomerTypes: params => dispatch(getCustomerTypesAction(params)),
-    //   load: data => dispatch(loadCurrentCustomer(data)),
+      load: data => dispatch(loadCurrentCustomerType(data)),
       resetAddPage: () => dispatch(reset("CustomerTypeAddPage")),
       resetNewCustomerType: () => dispatch(resetNewCustomerType()),
-    //   resetEditPage: () => dispatch(reset("CustomerEditPage")),
-    //   resetCurrentCustomer: () => dispatch(resetCurrentCustomer()),
+      resetEditPage: () => dispatch(reset("CustomerTypeEditPage")),
+      resetCurrentCustomerType: () => dispatch(resetCurrentCustomerType()),
       redirectLoginPage: () => dispatch(redirectToLoginAction()),
       setLoading: isLoading => dispatch(setLoadingCustomerType(isLoading))
     };
