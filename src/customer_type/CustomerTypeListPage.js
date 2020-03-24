@@ -18,8 +18,9 @@ import auth from "../auth/auth-helper"
 import { redirectToLoginAction } from "../core/core-action-creator";
 import CustomerTypeAdd from "./CustomerTypeAdd";
 import CustomerTypeEdit from "./CustomerTypeEdit";
-import { postCustomerType, putCustomerType } from "./customerType-api";
+import { postCustomerType, putCustomerType, deleteCustomerType } from "./customerType-api";
 import Alert from "react-s-alert";
+import ModalConfirm from "../components/ModalConfirm";
 
 class CustomerTypeListPage extends Component {
 
@@ -186,6 +187,46 @@ class CustomerTypeListPage extends Component {
         })
     };
 
+    showConfirmDelete = itemId => {
+        this.setState(
+            {
+                customerTypeId: itemId
+            },
+            () => this.toggleModalConfirm()
+        )
+    }
+
+    toggleModalConfirm = () => {
+        this.setState(prevState => ({
+            isShowModalConfirm: !prevState.isShowModalConfirm
+        }))
+    }
+
+    delete = () => {
+        const { redirectLoginPage } = this.props;
+        const jwt = auth.isAuthenticated();
+        deleteCustomerType(jwt, {
+            code: this.state.customerTypeId,
+        }).then(result => {
+            this.setState({ customerTypeId: null });
+            this.getCustomerTypes();
+            this.toggleModalConfirm();
+            Alert.success("Xóa loại khách hàng thành công");
+        }, error => {
+            if (error.errorCode) {
+                Alert.error(error.errorMessage);
+                if (error.errorCode === "401") {
+                    redirectLoginPage();
+                }
+            } else {
+                redirectLoginPage();
+                Alert.error("Không thể kết nối đến server.");
+            }
+        }).catch(err => {
+            redirectLoginPage();
+            Alert.error("Không thể kết nối đến server.");
+        })
+    }
 
     render() {
         const { isShowModalAdd, titleAdd, isShowModal, title, isShowModalConfirm } = this.state;
@@ -289,7 +330,7 @@ class CustomerTypeListPage extends Component {
                                                                 <span
                                                                     style={{ color: "#fff", cursor: "pointer" }}
                                                                     className="small-box-footer"
-                                                                    onClick={() => this.showConfirmDelete(1)}
+                                                                    onClick={() => this.showConfirmDelete(customerType.code)}
                                                                 >
                                                                     <i className="glyphicon glyphicon-trash text-red" />
                                                                 </span>
@@ -326,6 +367,11 @@ class CustomerTypeListPage extends Component {
                     updateCustomerType={this.updateCustomerType}
                     pristine={pristine}
                     submitting={submitting}
+                />
+                 <ModalConfirm
+                    isShowModal={isShowModalConfirm}
+                    handleClose={this.toggleModalConfirm}
+                    clickOk={this.delete}
                 />
             </React.Fragment>
         )
