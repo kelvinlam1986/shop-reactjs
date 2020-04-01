@@ -28,6 +28,10 @@ const Urls = {
   PostCustomerType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer_type`,
   PutCustomerType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer_type`,
   DeleteCustomerType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/customer_type`,
+  GetReceiptTypes: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/receipt_type`,
+  PostReceiptType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/receipt_type`,
+  PutReceiptType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/receipt_type`,
+  DeleteReceiptType: `${protocol}://${config.hostName}:${config.apiPort}/api/${config.apiVersioning}/receipt_type`,
 };
 
 export default Urls;
