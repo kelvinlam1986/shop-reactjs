@@ -10,6 +10,7 @@ import PrivateRoute from "./core/PrivateRoute";
 import BankListPage from "./bank/BankListPage";
 import CountryListPage from "./country/CountryListPage";
 import CustomerTypeListPage from "./customer_type/CustomerTypeListPage";
+import ReceiptTypeListPage from "./receipt_type/ReceiptTypeListPage";
 import { SignInForm } from "./auth/SignIn";
 
 export default class MainRouter extends Component {
@@ -24,6 +25,7 @@ export default class MainRouter extends Component {
         <PrivateRoute exact path="/banks" component={BankListPage} />
         <PrivateRoute exact path="/countries" component={CountryListPage} />
         <PrivateRoute exact path="/customer_type" component={CustomerTypeListPage}/>
+        <PrivateRoute exact path="/receipt_type" component={ReceiptTypeListPage} />
         <PrivateRoute exact path="/" component={Home} />
         <Route path="/signin" component={props => <SignInForm {...props} />} />
       </React.Fragment>

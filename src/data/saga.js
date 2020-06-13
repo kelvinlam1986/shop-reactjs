@@ -7,6 +7,7 @@ import { watchSupplierSagasAsync } from "../supplier/supplier-saga";
 import { watchBankSagasAsync } from "../bank/bank-saga";
 import { watchCountriesSagasAsync } from "../country/country-saga";
 import { watchCustomerTypeSagasAsync } from "../customer_type/customerType-saga";
+import { watchReceiptTypeSagasAsync } from "../receipt_type/receiptType-saga"
 
 export default function* sagas() {
   yield all([fork(watchCoreSagasAsync)]);
@@ -16,5 +17,6 @@ export default function* sagas() {
   yield all([fork(watchSupplierSagasAsync)]);
   yield all([fork(watchBankSagasAsync)]);
   yield all([fork(watchCountriesSagasAsync)]);
-  yield all([fork(watchCustomerTypeSagasAsync)])
+  yield all([fork(watchCustomerTypeSagasAsync)]);
+  yield all([fork(watchReceiptTypeSagasAsync)]);
 }

@@ -16,8 +16,8 @@ import Alert from "react-s-alert";
 
 const login = user => {
   return signin(user).then(result => {
-    if (result.error) {
-      return { error: result.error, payload: null };
+    if (result.message) {
+      return { error: result.message, payload: null };
     } else {
       return { payload: result, error: null };
     }

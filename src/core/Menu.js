@@ -48,6 +48,12 @@ const Menu = withRouter(({ history, username }) => (
                       </Link>
                     </li> */}
                     <li>
+                      <Link to="/receipt_type">
+                        <i className="glyphicon glyphicon-user text-green" />
+                        Loại phiếu thu
+                      </Link>
+                    </li>
+                    <li>
                       <Link to="/customer_type">
                         <i className="glyphicon glyphicon-user text-green" />
                         Loại khách hàng
