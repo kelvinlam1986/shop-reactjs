@@ -187,6 +187,13 @@ class CustomerTypeListPage extends Component {
         })
     };
 
+    handleClose = (e) => {
+        const { resetEditPage, resetCurrentCustomerType } = this.props;
+        resetEditPage();
+        resetCurrentCustomerType();
+        this.setState({ isShowModal: false });
+    }
+
     showConfirmDelete = itemId => {
         this.setState(
             {
