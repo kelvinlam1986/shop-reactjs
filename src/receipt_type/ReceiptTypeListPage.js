@@ -15,8 +15,9 @@ import { loadCurrentReceiptType,
     setLoadingReceiptType } from "./receiptType-action-creator"
 import { reset } from "redux-form";
 import auth from "../auth/auth-helper";
-import { postReceiptType, putReceiptType } from "./receiptType-api";
+import { postReceiptType, putReceiptType, deleteReceiptType } from "./receiptType-api";
 import Alert from "react-s-alert";
+import ModalConfirm from "../components/ModalConfirm";
 // import * as numeral from "numeral"
 
 class ReceiptTypeListPage extends Component {
@@ -30,7 +31,9 @@ class ReceiptTypeListPage extends Component {
         page: 0,
         pageSize: config.pageSize,
         keyword: ""
-      }
+      },
+      receiptTypeId: null,
+      isShowModalConfirm: false
     };
 
     this.delayedCallback = _.debounce(this.search, 250);
@@ -106,267 +109,320 @@ class ReceiptTypeListPage extends Component {
     this.setState({ isShowModal: false });
   }
 
-handleShowAdd = () => {
-  this.setState({
-      isShowModalAdd: true,
-  });
-}
-
-handleCloseAdd = e => {
-  const { resetAddPage, resetNewReceiptType } = this.props;
-  resetAddPage();
-  resetNewReceiptType();
-  this.setState({ isShowModalAdd: false });
-};
-
-addReceiptType = values => {
-    const {
-        resetAddPage,
-        resetNewReceiptType,
-        redirectLoginPage
-    } = this.props;
-
-    this.setState({ isShowModalAdd: false });
-    const jwt = auth.isAuthenticated();
-    postReceiptType(
-        jwt,
-        {
-            code: values.code,
-            name: values.name,
-            receiptTypeInVietnamese: values.receiptTypeInVietnamese,
-            receiptTypeInSecondLanguage: values.receiptTypeInSecondLanguage,
-            showReceiptTypeInVietNamese: values.showReceiptTypeInVietNamese
-        }
-    )
-        .then(
-            result => {
-                resetAddPage();
-                resetNewReceiptType();
-                Alert.success("Lưu loại thu tiền thành công");
-                this.getReceiptTypes();
-            },
-            error => {
-                if (error.errorCode) {
-                    Alert.error(error.errorMessage);
-                    if (error.errorCode === "401") {
-                        redirectLoginPage();
-                    }
-                } else {
-                    redirectLoginPage();
-                    Alert.error("Không thể kết nối đến server.");
-                }
-            }
-        )
-        .catch(err => {
-            redirectLoginPage();
-            Alert.error("Không thể kết nối đến server.");
-        });
-}
-
-updateReceiptType = (values) => {
-    const {
-      resetEditPage,
-      resetCurrentReceiptType,
-      redirectLoginPage
-    } = this.props;
-
-    this.setState({ isShowModal: false });
-    const jwt = auth.isAuthenticated();
-    putReceiptType(
-      jwt,
-      {
-        code: values.code,
-        receiptTypeInVietnamese: values.receiptTypeInVietnamese,
-        receiptTypeInSecondLanguage: values.receiptTypeInSecondLanguage,
-        showReceiptTypeInVietNamese: values.showReceiptTypeInVietNamese
-      }).then(result => {
-        resetEditPage();
-        resetCurrentReceiptType();
-        Alert.success("Lưu loại phiếu thu thành công");
-        this.getReceiptTypes();
-      }, error => {
-        if (error.errorCode) {
-          Alert.error(error.errorMessage);
-          if (error.errorCode === "401") {
-            redirectLoginPage();
-          }
-        } else {
-          redirectLoginPage();
-          Alert.error("Không thể kết nối đến server.");
-        }
-      }
-      ).catch(err => {
-        redirectLoginPage();
-        Alert.error("Không thể kết nối đến server.");
-      });
+  handleShowAdd = () => {
+    this.setState({
+        isShowModalAdd: true,
+    });
   }
 
-  render() {
-    const { isShowModal, title,  isShowModalAdd, titleAdd, } = this.state;
-    const {
-      loading,
-      redirectToLogin,
-      receiptTypes,
-      totalPages,
-      page,
-      pristine,
-      submitting
-    } = this.props;
+  showConfirmDelete = itemId => {
+    this.setState(
+        {
+            receiptTypeId: itemId
+        },
+        () => this.toggleModalConfirm()
+    )
+  }
 
-    const from = { pathname: "/signin" };
-    if (redirectToLogin) {
-      return <Redirect to={from} />;
+  delete = () => {
+    const { redirectLoginPage } = this.props;
+    const jwt = auth.isAuthenticated();
+    deleteReceiptType(jwt, {
+        code: this.state.receiptTypeId,
+    }).then(result => {
+        this.setState({ receiptTypeId: null });
+        this.getReceiptTypes();
+        this.toggleModalConfirm();
+        Alert.success("Xóa loại phiếu thu thành công");
+    }, error => {
+        if (error.errorCode) {
+            Alert.error(error.errorMessage);
+            if (error.errorCode === "401") {
+                redirectLoginPage();
+            }
+        } else {
+            redirectLoginPage();
+            Alert.error("Không thể kết nối đến server.");
+        }
+    }).catch(err => {
+        redirectLoginPage();
+        Alert.error("Không thể kết nối đến server.");
+    })
+  }
+
+  toggleModalConfirm = () => {
+    this.setState(prevState => ({
+        isShowModalConfirm: !prevState.isShowModalConfirm
+    }))
+  }
+
+  handleCloseAdd = e => {
+    const { resetAddPage, resetNewReceiptType } = this.props;
+    resetAddPage();
+    resetNewReceiptType();
+    this.setState({ isShowModalAdd: false });
+  };
+
+  addReceiptType = values => {
+      const {
+          resetAddPage,
+          resetNewReceiptType,
+          redirectLoginPage
+      } = this.props;
+
+      this.setState({ isShowModalAdd: false });
+      const jwt = auth.isAuthenticated();
+      postReceiptType(
+          jwt,
+          {
+              code: values.code,
+              name: values.name,
+              receiptTypeInVietnamese: values.receiptTypeInVietnamese,
+              receiptTypeInSecondLanguage: values.receiptTypeInSecondLanguage,
+              showReceiptTypeInVietNamese: values.showReceiptTypeInVietNamese
+          }
+      )
+          .then(
+              result => {
+                  resetAddPage();
+                  resetNewReceiptType();
+                  Alert.success("Lưu loại thu tiền thành công");
+                  this.getReceiptTypes();
+              },
+              error => {
+                  if (error.errorCode) {
+                      Alert.error(error.errorMessage);
+                      if (error.errorCode === "401") {
+                          redirectLoginPage();
+                      }
+                  } else {
+                      redirectLoginPage();
+                      Alert.error("Không thể kết nối đến server.");
+                  }
+              }
+          )
+          .catch(err => {
+              redirectLoginPage();
+              Alert.error("Không thể kết nối đến server.");
+          });
+  }
+
+  updateReceiptType = (values) => {
+      const {
+        resetEditPage,
+        resetCurrentReceiptType,
+        redirectLoginPage
+      } = this.props;
+
+      this.setState({ isShowModal: false });
+      const jwt = auth.isAuthenticated();
+      putReceiptType(
+        jwt,
+        {
+          code: values.code,
+          receiptTypeInVietnamese: values.receiptTypeInVietnamese,
+          receiptTypeInSecondLanguage: values.receiptTypeInSecondLanguage,
+          showReceiptTypeInVietNamese: values.showReceiptTypeInVietNamese
+        }).then(result => {
+          resetEditPage();
+          resetCurrentReceiptType();
+          Alert.success("Lưu loại phiếu thu thành công");
+          this.getReceiptTypes();
+        }, error => {
+          if (error.errorCode) {
+            Alert.error(error.errorMessage);
+            if (error.errorCode === "401") {
+              redirectLoginPage();
+            }
+          } else {
+            redirectLoginPage();
+            Alert.error("Không thể kết nối đến server.");
+          }
+        }
+        ).catch(err => {
+          redirectLoginPage();
+          Alert.error("Không thể kết nối đến server.");
+        });
     }
-    return (
-      <React.Fragment>
-        {loading && <Loading />}
-        <section className="content-header">
-          <h1>
-            <Link to="/" className="btn btn-md btn-info">
-              Quay về
-            </Link>
-            {" "}
-            <button type="button"
-                className="btn btn-md btn-primary"
-                onClick={this.handleShowAdd}>Thêm mới</button>
-          </h1>
-          <ol className="breadcrumb">
-            <li>
-              <Link to="/">
-                <i className="fa fa-dashboard" /> Trang chủ
+
+    render() {
+      const { isShowModal, title,  isShowModalAdd, titleAdd, isShowModalConfirm } = this.state;
+      const {
+        loading,
+        redirectToLogin,
+        receiptTypes,
+        totalPages,
+        page,
+        pristine,
+        submitting
+      } = this.props;
+
+      const from = { pathname: "/signin" };
+      if (redirectToLogin) {
+        return <Redirect to={from} />;
+      }
+      return (
+        <React.Fragment>
+          {loading && <Loading />}
+          <section className="content-header">
+            <h1>
+              <Link to="/" className="btn btn-md btn-info">
+                Quay về
               </Link>
-            </li>
-            <li className="active">Loại thu tiền</li>
-          </ol>
-        </section>
-        <section className="content">
-          <div className="row">
-            <div className="col-xs-12">
-              <div className="box box-primary">
-                <div className="box-header">
-                  <h3 className="box-title">Danh sách loại thu tiền</h3>
-                  <div className="box-tools">
-                    <div
-                      className="input-group input-group-sm hidden-xs"
-                      style={{ width: "200px" }}
-                    >
-                      <input
-                        type="text"
-                        name="table_search"
-                        className="form-control pull-right"
-                        placeholder="Tìm kiếm"
-                        onChange={this.onSearchChange}
-                      />
-                      <div className="input-group-btn">
-                        <button
-                          type="submit"
-                          className="btn btn-default"
-                          onClick={this.onSearchClick}
-                        >
-                          <i className="fa fa-search"></i>
-                        </button>
+              {" "}
+              <button type="button"
+                  className="btn btn-md btn-primary"
+                  onClick={this.handleShowAdd}>Thêm mới</button>
+            </h1>
+            <ol className="breadcrumb">
+              <li>
+                <Link to="/">
+                  <i className="fa fa-dashboard" /> Trang chủ
+                </Link>
+              </li>
+              <li className="active">Loại thu tiền</li>
+            </ol>
+          </section>
+          <section className="content">
+            <div className="row">
+              <div className="col-xs-12">
+                <div className="box box-primary">
+                  <div className="box-header">
+                    <h3 className="box-title">Danh sách loại thu tiền</h3>
+                    <div className="box-tools">
+                      <div
+                        className="input-group input-group-sm hidden-xs"
+                        style={{ width: "200px" }}
+                      >
+                        <input
+                          type="text"
+                          name="table_search"
+                          className="form-control pull-right"
+                          placeholder="Tìm kiếm"
+                          onChange={this.onSearchChange}
+                        />
+                        <div className="input-group-btn">
+                          <button
+                            type="submit"
+                            className="btn btn-default"
+                            onClick={this.onSearchClick}
+                          >
+                            <i className="fa fa-search"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="box-body">
-                  <table
-                    id="example1"
-                    className="table table-bordered table-striped"
-                  >
-                    <thead>
-                      <tr>
-                        <th>Mã</th>
-                        <th>Tên (VN)</th>
-                        <th>Tên (Khác)</th>
-                        <th>Hiển thị VN</th>
-                        <th>Hoạt động</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {receiptTypes &&
-                        receiptTypes.length > 0 &&
-                        receiptTypes.map((receiptType, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{receiptType.code}</td>
-                              <td>{receiptType.receiptTypeInVietnamese}</td>
-                              <td>{receiptType.receiptTypeInSecondLanguage}</td>
-                              <td>
-                                {
-                                    receiptType.showReceiptTypeInVietNamese === true ?
-                                         <span className="badge bg-green">Có</span> : <span className="badge bg-red">Không</span>
-                                }
-                              </td>
-                              <td>
-                                <span
-                                  style={{ color: "#fff", cursor: "pointer" }}
-                                  className="small-box-footer"
-                                  onClick={() => this.showDetail(index)}
-                                >
-                                  <i className="glyphicon glyphicon-edit text-blue" />
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </table>
-                  <Pagination
-                    totalPages={totalPages}
-                    page={page}
-                    pageRangeDisplayed={2}
-                    onPageChange={this.handlePageClick}
-                  />
+                  <div className="box-body">
+                    <table
+                      id="example1"
+                      className="table table-bordered table-striped"
+                    >
+                      <thead>
+                        <tr>
+                          <th>Mã</th>
+                          <th>Tên (VN)</th>
+                          <th>Tên (Khác)</th>
+                          <th>Hiển thị VN</th>
+                          <th>Hoạt động</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {receiptTypes &&
+                          receiptTypes.length > 0 &&
+                          receiptTypes.map((receiptType, index) => {
+                            return (
+                              <tr key={index}>
+                                <td>{receiptType.code}</td>
+                                <td>{receiptType.receiptTypeInVietnamese}</td>
+                                <td>{receiptType.receiptTypeInSecondLanguage}</td>
+                                <td>
+                                  {
+                                      receiptType.showReceiptTypeInVietNamese === true ?
+                                          <span className="badge bg-green">Có</span> : <span className="badge bg-red">Không</span>
+                                  }
+                                </td>
+                                <td>
+                                  <span
+                                    style={{ color: "#fff", cursor: "pointer" }}
+                                    className="small-box-footer"
+                                    onClick={() => this.showDetail(index)}
+                                  >
+                                    <i className="glyphicon glyphicon-edit text-blue" />
+                                  </span>
+                                  {" "}
+                                  <span
+                                      style={{ color: "#fff", cursor: "pointer" }}
+                                      className="small-box-footer"
+                                      onClick={() => this.showConfirmDelete(receiptType.code)}
+                                  >
+                                      <i className="glyphicon glyphicon-trash text-red" />
+                                    </span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                    <Pagination
+                      totalPages={totalPages}
+                      page={page}
+                      pageRangeDisplayed={2}
+                      onPageChange={this.handlePageClick}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-        <ReceiptTypeAdd
-            isShowModal={isShowModalAdd}
-            handleClose={this.handleCloseAdd}
-            title={titleAdd}
-            addReceiptType={this.addReceiptType}
+          </section>
+          <ReceiptTypeAdd
+              isShowModal={isShowModalAdd}
+              handleClose={this.handleCloseAdd}
+              title={titleAdd}
+              addReceiptType={this.addReceiptType}
+              pristine={pristine}
+              submitting={submitting}
+          />
+          <ReceiptTypeEdit
+            isShowModal={isShowModal}
+            handleClose={this.handleClose}
+            title={title}
+            updateReceiptType={this.updateReceiptType}
             pristine={pristine}
             submitting={submitting}
-        />
-        <ReceiptTypeEdit
-          isShowModal={isShowModal}
-          handleClose={this.handleClose}
-          title={title}
-          updateReceiptType={this.updateReceiptType}
-          pristine={pristine}
-          submitting={submitting}
-        />
-      </React.Fragment>
-    );
+          />
+           <ModalConfirm
+              isShowModal={isShowModalConfirm}
+              handleClose={this.toggleModalConfirm}
+              clickOk={this.delete} />
+        </React.Fragment>
+      );
+    }
   }
-}
 
-const mapStateToProps = state => {
-  const { loading, receiptTypes, totalPages, page } = state.receiptType;
-  const { redirectToLogin } = state.core;
-  return {
-    loading,
-    receiptTypes,
-    redirectToLogin,
-    totalPages,
-    page
+  const mapStateToProps = state => {
+    const { loading, receiptTypes, totalPages, page } = state.receiptType;
+    const { redirectToLogin } = state.core;
+    return {
+      loading,
+      receiptTypes,
+      redirectToLogin,
+      totalPages,
+      page
+    };
   };
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    getReceiptTypes: params => dispatch(getReceiptTypesAction(params)),
-    redirectLoginPage: () => dispatch(redirectToLoginAction()),
-    setLoading: isLoading => dispatch(setLoadingReceiptType(isLoading)),
-    resetAddPage: () => dispatch(reset("ReceiptTypeAddPage")),
-    resetNewReceiptType: () => dispatch(resetNewReceiptType()),
-    load: data => dispatch(loadCurrentReceiptType(data)),
-    resetEditPage: () => dispatch(reset("ReceiptTypeEditPage")),
-    resetCurrentReceiptType: () => dispatch(resetCurrentReceiptType()),
+  const mapDispatchToProps = dispatch => {
+    return {
+      getReceiptTypes: params => dispatch(getReceiptTypesAction(params)),
+      redirectLoginPage: () => dispatch(redirectToLoginAction()),
+      setLoading: isLoading => dispatch(setLoadingReceiptType(isLoading)),
+      resetAddPage: () => dispatch(reset("ReceiptTypeAddPage")),
+      resetNewReceiptType: () => dispatch(resetNewReceiptType()),
+      load: data => dispatch(loadCurrentReceiptType(data)),
+      resetEditPage: () => dispatch(reset("ReceiptTypeEditPage")),
+      resetCurrentReceiptType: () => dispatch(resetCurrentReceiptType()),
+    };
   };
-};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReceiptTypeListPage);
