@@ -4,6 +4,7 @@ import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import RegisterModal from "../components/RegisterModal";
 import renderInput from "../components/AdvanceTextField";
+import renderCheckbox from "../components/CheckboxField"
 import _ from "lodash";
 
 const validate = values => {
@@ -69,6 +70,9 @@ class ReceiptTypeAdd extends Component {
                         label="Tên (VN)" />
                     <Field name="receiptTypeInSecondLanguage" component={renderInput} 
                         label="Tên (Khác)" />
+                    <Field name="showReceiptTypeInVietNamese"
+                        component={renderCheckbox}
+                        label="Hiển thị"></Field>
                 </Form>
             </RegisterModal>
         )

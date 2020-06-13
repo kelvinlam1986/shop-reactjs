@@ -134,7 +134,7 @@ addReceiptType = values => {
             name: values.name,
             receiptTypeInVietnamese: values.receiptTypeInVietnamese,
             receiptTypeInSecondLanguage: values.receiptTypeInSecondLanguage,
-            showReceiptTypeInVietNamese: true
+            showReceiptTypeInVietNamese: values.showReceiptTypeInVietNamese
         }
     )
         .then(
