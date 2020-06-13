@@ -7,14 +7,15 @@ import config from "../config";
 import _ from "lodash";
 import { redirectToLoginAction } from "../core/core-action-creator";
 import ReceiptTypeAdd from "./ReceiptTypeAdd";
-// import ProductEdit from "./ProductEdit";
+import ReceiptTypeEdit from "./ReceiptTypeEdit";
 import { loadCurrentReceiptType, 
     resetCurrentReceiptType,
     resetNewReceiptType,
-    getReceiptTypesAction, setLoadingReceiptType } from "./receiptType-action-creator"
+    getReceiptTypesAction, 
+    setLoadingReceiptType } from "./receiptType-action-creator"
 import { reset } from "redux-form";
 import auth from "../auth/auth-helper";
-import { postReceiptType } from "./receiptType-api";
+import { postReceiptType, putReceiptType } from "./receiptType-api";
 import Alert from "react-s-alert";
 // import * as numeral from "numeral"
 
@@ -81,29 +82,29 @@ class ReceiptTypeListPage extends Component {
     this.getReceiptTypes();
   };
 
-//   showDetail = index => {
-//     this.handleShow(index);
-//   };
+  showDetail = index => {
+    this.handleShow(index);
+  };
 
-//   handleShow = index => {
-//     const currentProduct = this.props.products[index];
-//     this.setState(
-//       {
-//         isShowModal: true,
-//         title: `Thông tin chi tiết: ${currentProduct.serial} ${currentProduct.name}`
-//       },
-//       () => {
-//         this.props.load(this.props.products[index]);
-//       }
-//     );
-//   };
+  handleShow = index => {
+    const currentReceiptType = this.props.receiptTypes[index];
+    this.setState(
+      {
+        isShowModal: true,
+        title: `Thông tin chi tiết: ${currentReceiptType.code}`
+      },
+      () => {
+        this.props.load(this.props.receiptTypes[index]);
+      }
+    );
+  };
 
-//   handleClose = (e) => {
-//     const { resetEditPage, resetCurrentProduct } = this.props;
-//     resetEditPage();
-//     resetCurrentProduct();
-//     this.setState({ isShowModal: false });
-//   }
+  handleClose = (e) => {
+    const { resetEditPage, resetCurrentReceiptType } = this.props;
+    resetEditPage();
+    resetCurrentReceiptType();
+    this.setState({ isShowModal: false });
+  }
 
 handleShowAdd = () => {
   this.setState({
@@ -162,46 +163,43 @@ addReceiptType = values => {
         });
 }
 
-//   updateProduct = (values) => {
-//     const {
-//       resetEditPage,
-//       resetCurrentProduct,
-//       redirectLoginPage
-//     } = this.props;
+updateReceiptType = (values) => {
+    const {
+      resetEditPage,
+      resetCurrentReceiptType,
+      redirectLoginPage
+    } = this.props;
 
-//     this.setState({ isShowModal: false });
-//     const jwt = auth.isAuthenticated();
-//     putProduct(
-//       jwt,
-//       {
-//         name: values.name,
-//         serial: values.serial,
-//         description: values.description,
-//         categoryId: parseInt(values.categoryId, 10),
-//         supplierId: parseInt(values.supplierId, 10),
-//         price: parseFloat(values.price),
-//         reorder: parseFloat(values.reorder)
-//       }, values.id).then(result => {
-//         resetEditPage();
-//         resetCurrentProduct();
-//         Alert.success("Lưu sản phẩm thành công");
-//         this.getProducts();
-//       }, error => {
-//         if (error.errorCode) {
-//           Alert.error(error.errorMessage);
-//           if (error.errorCode === "401") {
-//             redirectLoginPage();
-//           }
-//         } else {
-//           redirectLoginPage();
-//           Alert.error("Không thể kết nối đến server.");
-//         }
-//       }
-//       ).catch(err => {
-//         redirectLoginPage();
-//         Alert.error("Không thể kết nối đến server.");
-//       });
-//   }
+    this.setState({ isShowModal: false });
+    const jwt = auth.isAuthenticated();
+    putReceiptType(
+      jwt,
+      {
+        code: values.code,
+        receiptTypeInVietnamese: values.receiptTypeInVietnamese,
+        receiptTypeInSecondLanguage: values.receiptTypeInSecondLanguage,
+        showReceiptTypeInVietNamese: values.showReceiptTypeInVietNamese
+      }).then(result => {
+        resetEditPage();
+        resetCurrentReceiptType();
+        Alert.success("Lưu loại phiếu thu thành công");
+        this.getReceiptTypes();
+      }, error => {
+        if (error.errorCode) {
+          Alert.error(error.errorMessage);
+          if (error.errorCode === "401") {
+            redirectLoginPage();
+          }
+        } else {
+          redirectLoginPage();
+          Alert.error("Không thể kết nối đến server.");
+        }
+      }
+      ).catch(err => {
+        redirectLoginPage();
+        Alert.error("Không thể kết nối đến server.");
+      });
+  }
 
   render() {
     const { isShowModal, title,  isShowModalAdd, titleAdd, } = this.state;
@@ -333,15 +331,14 @@ addReceiptType = values => {
             pristine={pristine}
             submitting={submitting}
         />
-        {/* <ProductEdit
+        <ReceiptTypeEdit
           isShowModal={isShowModal}
           handleClose={this.handleClose}
-          container={this}
           title={title}
-          saveProduct={this.updateProduct}
+          updateReceiptType={this.updateReceiptType}
           pristine={pristine}
           submitting={submitting}
-        /> */}
+        />
       </React.Fragment>
     );
   }
@@ -366,9 +363,9 @@ const mapDispatchToProps = dispatch => {
     setLoading: isLoading => dispatch(setLoadingReceiptType(isLoading)),
     resetAddPage: () => dispatch(reset("ReceiptTypeAddPage")),
     resetNewReceiptType: () => dispatch(resetNewReceiptType()),
-    // load: data => dispatch(loadCurrentProduct(data)),
-    // resetEditPage: () => dispatch(reset("ProductEditPage")),
-    // resetCurrentProduct: () => dispatch(resetCurrentProduct()),
+    load: data => dispatch(loadCurrentReceiptType(data)),
+    resetEditPage: () => dispatch(reset("ReceiptTypeEditPage")),
+    resetCurrentReceiptType: () => dispatch(resetCurrentReceiptType()),
   };
 };
 

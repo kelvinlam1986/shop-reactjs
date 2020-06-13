@@ -11,7 +11,7 @@ const renderInput = ({ input, label, meta, autofocus }) => {
         <FormGroup
           controlId={input.name}
         >
-          <Checkbox inline {...input}>{label}</Checkbox>
+          <Checkbox inline {...input} checked={input.value ? true : false}>{label}</Checkbox>
         </FormGroup>
       </React.Fragment>
     );
