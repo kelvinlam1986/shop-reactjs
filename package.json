@@ -6,7 +6,7 @@
     "@simply007org/react-spinners": "^0.0.3",
     "better-react-spinkit": "^2.0.4",
     "formik": "^1.5.7",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
